@@ -1,0 +1,41 @@
+﻿@model IEnumerable<FordonOversiktViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FordonsTyp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegNr)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.AnkomstTid)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FordonsTyp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegNr)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.AnkomstTid)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Ändra Fordonsdetaljer</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Fordonsdetaljer</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Hämta Fordon</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

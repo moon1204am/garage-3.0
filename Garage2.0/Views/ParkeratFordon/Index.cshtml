@@ -1,0 +1,28 @@
+﻿@model StartsidaViewModel
+
+@{
+    ViewData["Title"] = "Välkommen";
+}
+
+<h1 class="display-6">Åhlens Parkering City</h1>
+<h2>Antal Lediga platser: @Model.AntalLedigaPlatser.ToString()</h2>
+
+<p>  
+    <a asp-action="Create" class=" badge text-wrap text-decoration-none btnAhlens fs-6 p-3 mb-4 mt-3">Parkera Fordon</a>
+</p>
+
+<form asp-action="Filter" asp-controller="ParkeratFordon" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" asp-for="RegNr" placeholder="Sök via Regnr" />
+        <div class="input-group-append">
+            <select class="form-control" asp-for="FordonsTyp" asp-items="@Html.GetEnumSelectList<FordonsTyp>()">
+                <option selected="selected" value="">Välj fordon</option>
+            </select>
+        </div>
+        <div class="input-group-append">
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Sök</i></button>
+        </div>
+    </div>
+</form>
+<p class="alert-info"><strong>@TempData["OkFeedbackMsg"]</strong></p>
+<partial name="ParkListaPartial" model="@Model.ParkeradeFordon" />
