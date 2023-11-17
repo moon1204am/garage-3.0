@@ -1,0 +1,72 @@
+﻿@model Garage.Domain.Entities.Vehicle
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Vehicle</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LicenseNr)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LicenseNr)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Color)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Color)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Brand)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Model)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Model)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Wheels)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Wheels)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Arrival)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Arrival)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ParkingIndex)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ParkingIndex)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Person)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Person.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.VehicleType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.VehicleType.Size)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.VehicleId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
