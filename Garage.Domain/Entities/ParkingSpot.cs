@@ -13,7 +13,7 @@ namespace Garage.Domain.Entities
         //FK
         public int VehicleId { get; set; }
         //Nav prop
-        public Vehicle Vehicle { get; set; } = new Vehicle();
+        public Vehicle Vehicle { get; set; } = new Vehicle(null, null, null, null, 0);
         
     }
 }
