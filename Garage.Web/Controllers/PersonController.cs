@@ -62,6 +62,7 @@ namespace Garage2._0.Controllers
             {
                 _context.Add(person);
                 await _context.SaveChangesAsync();
+                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} har registerats som medlem.";
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
