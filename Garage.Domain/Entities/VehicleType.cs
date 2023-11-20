@@ -10,7 +10,7 @@ namespace Garage.Domain.Entities
     {
         public int VehicleTypeId { get; set; }
         public string Type { get; set; } = string.Empty;
-        public string Size { get; set; } = string.Empty;
+        public int Size { get; set; } 
         public ICollection<Vehicle> Vehicles { get; set; }
     }
 }

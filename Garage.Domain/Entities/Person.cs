@@ -10,22 +10,8 @@ namespace Garage.Domain.Entities
 {
     public class Person
     {
-        //private Person()
-        //{
-        //    FirstName = null!;
-        //    LastName = null!;
-        //    SSN = null!;
-        //}
-        public Person()
-        {
-            
-        }
-        public Person(string firstName, string lastName, string SSN)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            this.SSN = SSN;
-        }
+     
+    
         public int PersonId { get; set; }
         [Required(ErrorMessage = "Du måste ange ett personnumer")]
         [Display(Name = "Personnummer")]

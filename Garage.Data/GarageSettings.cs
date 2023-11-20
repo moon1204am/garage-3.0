@@ -14,10 +14,10 @@ namespace Garage.Data
         public const string car = "Car";
         public const string motorcycle = "Motorcycle";
 
-        public const string large = "Large";
-        public const string medium = "Medium";
-        public const string normal = "Normal";
-        public const string small = "Small";
+        public const int large = 3;
+        public const int medium = 2;
+        public const int normal = 1;
+        public const int small = 1;
 
         public const int capacity = 20;
     }
