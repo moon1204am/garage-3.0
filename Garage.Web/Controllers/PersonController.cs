@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage.Data.Data;
 using Garage.Domain.Entities;
+using Garage.Web.Models.ViewModels;
+using Garage3._0.Models.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Garage2._0.Controllers
 {
@@ -22,9 +25,23 @@ namespace Garage2._0.Controllers
         // GET: Person
         public async Task<IActionResult> Index()
         {
-              return _context.Person != null ? 
-                          View(await _context.Person.ToListAsync()) :
-                          Problem("Entity set 'Garage2_0Context.Person'  is null.");
+            var selection = await _context.Person.Select(v => new PersonOverViewViewModel
+           
+           {
+               PersonId = v.PersonId,
+               FirstName = v.FirstName,
+               LastName = v.LastName,
+               SSN = v.SSN,
+               NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+           }).ToListAsync();
+
+            var index = new PersonIndexViewModel
+            {
+                Members = selection,
+                
+            };
+
+            return View(index);
         }
 
         // GET: Person/Details/5
@@ -158,6 +175,31 @@ namespace Garage2._0.Controllers
         private bool PersonExists(int id)
         {
           return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel)
+        {
+            var query = string.IsNullOrWhiteSpace(personIndexViewModel.LastName) ?
+                                               _context.Person :
+                                               _context.Person.Where(p => p.LastName.StartsWith(personIndexViewModel.LastName));
+
+           // query = personIndexViewModel.LastName is null ? query : query.Where(v => v.LastName == personIndexViewModel.LastName);
+
+            var tempData = await query.Select(v => new PersonOverViewViewModel
+            {
+                PersonId = v.PersonId,
+                FirstName = v.FirstName,
+                LastName = v.LastName,
+                SSN = v.SSN,
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == personIndexViewModel.PersonId).Count(),
+            }).ToListAsync();
+
+            var querySelect = new PersonIndexViewModel
+            {
+                Members = tempData,
+                
+            };
+            return View(nameof(Index), querySelect);
         }
     }
 }
