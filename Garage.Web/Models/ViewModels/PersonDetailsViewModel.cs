@@ -1,6 +1,6 @@
 ﻿namespace Garage.Web.Models.ViewModels
 {
-    public class MemberEditViewModel
+    public class PersonDetailsViewModel
     {
     }
 }
