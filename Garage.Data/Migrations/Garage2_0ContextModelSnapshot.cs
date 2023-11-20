@@ -121,9 +121,8 @@ namespace Garage.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleTypeId"));
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()

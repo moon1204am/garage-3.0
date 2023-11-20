@@ -43,13 +43,15 @@ namespace Garage.Data
 
             for (int i = 0; i < numberOfPersons; i++)
             {
-                var fName = faker.Name.FirstName();
-                var lName = faker.Name.LastName();
-                var SSN = faker.Person.Personnummer();
+                      
+                 var person = new Person
+                    {
+                         FirstName = faker.Name.FirstName(),
+                         LastName = faker.Name.LastName(),
+                         SSN = faker.Person.Personnummer()
+                    };
 
-                var person = new Person(fName, lName, SSN);
-
-                students.Add(person);
+            students.Add(person);
             }
 
             return students;

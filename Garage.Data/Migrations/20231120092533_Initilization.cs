@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Garage.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initilization : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,7 @@ namespace Garage.Data.Migrations
                     VehicleTypeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Size = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
