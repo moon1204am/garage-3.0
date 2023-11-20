@@ -16,5 +16,7 @@ namespace Garage.Data.Data
 
         public DbSet<Vehicle> Vehicle { get; set; } = default!;
         public DbSet<Person> Person { get; set; } = default!;
+        public DbSet<VehicleType> VehicleType { get; set; } = default!;
+        public DbSet<ParkingSpot> ParkingSpot { get; set; } = default!;
     }
 }

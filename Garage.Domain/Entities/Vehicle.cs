@@ -5,20 +5,15 @@ namespace Garage.Domain.Entities
 {
     public class Vehicle
     {
-
         public int VehicleId { get; set; }
         [Required]
-        [Display(Name = "Registreringsnummer")]
         public string LicenseNr { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Färg")]
         public string Color { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Märke")]
         public string Brand { get; set; } = string.Empty;
-        [StringLength(20)][Display(Name = "Modell")] 
+        [StringLength(20)]
         public string Model { get; set; } = string.Empty;
-        [Display(Name = "Antal hjul")]
         [Range(0, 12)]
         public int? Wheels { get; set; }
         //FK

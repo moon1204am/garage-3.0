@@ -1,14 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Garage.Data.Data;
 using Garage2._0.Extensions;
+using Garage2._0.AutoMapperConfig;
+using Garage2._0.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(GarageMappings));
 
 builder.Services.AddDbContext<Garage2_0Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Garage2_0Context") ?? throw new InvalidOperationException("Connection string 'Garage2_0Context' not found.")));
+
+
+builder.Services.AddSingleton<IValidation, Validation>();
 
 var app = builder.Build();
 

@@ -11,9 +11,9 @@ namespace Garage.Domain.Entities
         public int ParkingSpotId { get; set; }
         public DateTime Arrival { get; set; }
         //FK
-        public int VehicleId { get; set; }
+        public int? VehicleId { get; set; }
         //Nav prop
-        public Vehicle Vehicle { get; set; } = new Vehicle();
+        public Vehicle Vehicle { get; set; }
         
     }
 }

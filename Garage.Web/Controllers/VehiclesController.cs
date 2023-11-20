@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
 using Garage.Data.Data;
+using Garage3._0.Models.ViewModels;
+using AutoMapper;
+using Garage.Data;
 
 namespace Garage3._0.Controllers
 {
     public class VehiclesController : Controller
     {
         private readonly Garage2_0Context _context;
+        private readonly IMapper mapper;
 
-        public VehiclesController(Garage2_0Context context)
+        public VehiclesController(Garage2_0Context context, IMapper mapper)
         {
             _context = context;
+            this.mapper = mapper;
         }
 
         // GET: Vehicles
@@ -47,29 +52,56 @@ namespace Garage3._0.Controllers
         }
 
         // GET: Vehicles/Create
-        public IActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName");
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size");
-            return View();
+            var vehicles = await _context.VehicleType.ToListAsync();
+
+            var createIndexViewModel = new CreateVehicleViewModel
+            {
+                VehicleTypes = GetVehicles(vehicles)
+            };
+
+            //ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName");
+            //ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size");
+            return View(createIndexViewModel);
         }
+
+        private static List<SelectListItem> GetVehicles(List<VehicleType> vehicleTypes)
+        {
+            return vehicleTypes.Select(t => new SelectListItem
+                                           {
+                                               Text = t.Type.ToString(),
+                                               Value = t.VehicleTypeId.ToString()
+                                           })
+                                           .ToList();
+        }
+
 
         // POST: Vehicles/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VehicleId,LicenseNr,Color,Brand,Model,Wheels,Arrival,ParkingIndex,VehicleTypeId,PersonId")] Vehicle vehicle)
+        public async Task<IActionResult> Create(CreateVehicleViewModel createVehicleViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(vehicle);
-                await _context.SaveChangesAsync();
+                var vehicle = mapper.Map<Vehicle>(createVehicleViewModel);
+
+                var parkingSpot = _context.ParkingSpot.Where(p => p.ParkingSpotId != null).FirstOrDefault();
+                if(parkingSpot != null)
+                {
+                    parkingSpot.Arrival = DateTime.Now;
+                    vehicle.ParkingSpots.Add(parkingSpot);
+
+                    _context.Add(vehicle);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
-            return View(vehicle);
+            //ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
+            //ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
+            return View(createVehicleViewModel);
         }
 
         // GET: Vehicles/Edit/5
