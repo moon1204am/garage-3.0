@@ -10,6 +10,7 @@ using Garage.Domain.Entities;
 using Garage.Web.Models.ViewModels;
 using Garage3._0.Models.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Collections;
 
 namespace Garage2._0.Controllers
 {
@@ -26,14 +27,18 @@ namespace Garage2._0.Controllers
         public async Task<IActionResult> Index()
         {
             var selection = await _context.Person.Select(v => new PersonOverViewViewModel
-           
-           {
-               PersonId = v.PersonId,
-               FirstName = v.FirstName,
-               LastName = v.LastName,
-               SSN = v.SSN,
-               NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
-           }).ToListAsync();
+
+            {
+                PersonId = v.PersonId,
+                FirstName = v.FirstName,
+                LastName = v.LastName,
+                SSN = v.SSN,
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+            }).OrderByDescending(p => p.FirstName.Substring(0, 2))
+             .ToListAsync();
+
+            selection.Reverse();
+
 
             var index = new PersonIndexViewModel
             {
