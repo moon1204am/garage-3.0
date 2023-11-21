@@ -1,7 +1,7 @@
 ﻿@model Garage.Domain.Entities.Person
 
 @{
-    ViewData["Title"] = "Ta bort";
+    ViewData["Title"] = "Delete";
 }
 
 <h1>Delete</h1>
@@ -33,7 +33,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="PersonId" />
-        <input type="submit" value="Ta bort" class="btn btn-danger" /> |
-        <a asp-action="Index">Tillbaka till startsida</a>
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to index</a>
     </form>
 </div>

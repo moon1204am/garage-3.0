@@ -63,7 +63,7 @@ namespace Garage2._0.Controllers
             {
                 _context.Add(person);
                 await _context.SaveChangesAsync();
-                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} har registerats som medlem.";
+                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
                 return RedirectToAction(nameof(Index));
             }
             
@@ -104,7 +104,7 @@ namespace Garage2._0.Controllers
                 {
                     _context.Update(person);
                     await _context.SaveChangesAsync();
-                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} har uppdaterat sina uppgifter.";
+                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has updated.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -163,6 +163,11 @@ namespace Garage2._0.Controllers
         {
             return (firstName != lastName);
         }
+
+        //private bool CheckAge(string ssn)
+        //{
+            
+        //}
         
         private bool PersonExists(int id)
         {

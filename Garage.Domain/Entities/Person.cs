@@ -13,15 +13,15 @@ namespace Garage.Domain.Entities
      
     
         public int PersonId { get; set; }
-        [Display(Name = "Personnummer"), Required(ErrorMessage = "Du måste ange ett personnumer")]
-        [RegularExpression(@"^(19|20)?[0-9]{6}[-+]?[0-9]{6}$", ErrorMessage = "Ogiltigt personnummer, det ska vara 12-siffrigt.")]
+        [Display(Name = "Social Security Number"), Required(ErrorMessage = "SSN is required.")]
+        [RegularExpression(@"^(19|20)?[0-9]{6}[-+]?[0-9]{6}$", ErrorMessage = "Invalid SSN, it should be 12 digits.")]
         public string SSN { get; set; } = string.Empty;
         
-        [Display(Name = "Efternamn"), Required(ErrorMessage = "Du måste ange ett efternamn")]
+        [Display(Name = "Last Name"), Required(ErrorMessage = "A last name is required")]
         
         public string LastName { get; set; } = string.Empty;
 
-        [Display(Name = "Förnamn"), Required(ErrorMessage = "Du måste ange ett förnamn")]
+        [Display(Name = "First Name"), Required(ErrorMessage = "A first name is required.")]
         
         public string FirstName { get; set; } = string.Empty;
         //Nav prop
