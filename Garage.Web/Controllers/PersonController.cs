@@ -11,6 +11,7 @@ using Garage.Web.Models.ViewModels;
 using Garage3._0.Models.ViewModels;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Collections;
+using System.Drawing.Printing;
 
 namespace Garage2._0.Controllers
 {
@@ -38,13 +39,12 @@ namespace Garage2._0.Controllers
             }).OrderByDescending(p => p.FirstName.Substring(0, 2))
              .ToListAsync();
 
-            selection.Reverse();
-            var data = selection.Skip(page * PageSize).Take(PageSize).ToList();
-            var count = selection.Count();
+            selection.Reverse();         
+            var count = selection.Count;
   
             var index = new PersonIndexViewModel
             {
-                Members = data,              
+                Members = selection.Skip(page * PageSize).Take(PageSize).ToList()
             };
                   
             ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
@@ -199,13 +199,12 @@ namespace Garage2._0.Controllers
           return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
         }
 
-        public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel)
+        public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel, int page = 0)
         {
+            const int PageSize = 3;
             var query = string.IsNullOrWhiteSpace(personIndexViewModel.LastName) ?
                                                _context.Person :
                                                _context.Person.Where(p => p.LastName.StartsWith(personIndexViewModel.LastName));
-
-           // query = personIndexViewModel.LastName is null ? query : query.Where(v => v.LastName == personIndexViewModel.LastName);
 
             var tempData = await query.Select(v => new PersonOverViewViewModel
             {
@@ -213,14 +212,20 @@ namespace Garage2._0.Controllers
                 FirstName = v.FirstName,
                 LastName = v.LastName,
                 SSN = v.SSN,
-                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == personIndexViewModel.PersonId).Count(),
-            }).ToListAsync();
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+            }).OrderByDescending(p => p.FirstName.Substring(0, 2))
+             .ToListAsync();
+
+            tempData.Reverse();
+            var count = tempData.Count;
 
             var querySelect = new PersonIndexViewModel
             {
-                Members = tempData,
-                
+                Members = tempData.Skip(page * PageSize).Take(PageSize).ToList()
             };
+  
+            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+            ViewBag.Page = page;
             return View(nameof(Index), querySelect);
         }
     }
