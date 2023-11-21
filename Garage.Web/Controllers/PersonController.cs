@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garage.Data.Data;
+﻿using Garage.Data.Data;
 using Garage.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage2._0.Controllers
 {
@@ -58,8 +53,13 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
         {
+            //if (SSNExistedValidation(person.SSN))
+            //{
+            //    ModelState.AddModelError("SSN", "SSN is already existed.");
+            //    return View();
+            //}
             
-            if (ModelState.IsValid && CheckName(person.FirstName, person.LastName))
+            if (ModelState.IsValid && SSNExistedValidation(person.SSN) && CheckName(person.FirstName, person.LastName))
             {
                 _context.Add(person);
                 await _context.SaveChangesAsync();
@@ -68,6 +68,13 @@ namespace Garage2._0.Controllers
             }
             
             return View(person);
+        }
+
+        private bool SSNExistedValidation(string sSN)
+        {
+            var person = _context.Person.FirstOrDefaultAsync(p => p.SSN == sSN);
+            if (person == null) { return true; }
+            return false;
         }
 
         // GET: Person/Edit/5
