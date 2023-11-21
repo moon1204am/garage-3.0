@@ -23,7 +23,7 @@ namespace Garage.Domain.Entities
         public Person Person { get; set; } = new Person();
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
         [Display(Name = "Fordons typ")]
-        public VehicleType VehicleType { get; set; } = new VehicleType();
+        public VehicleType VehicleType { get; set; }
 
 
     }

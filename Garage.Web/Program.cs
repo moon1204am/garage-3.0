@@ -3,6 +3,7 @@ using Garage.Data.Data;
 using Garage2._0.Extensions;
 using Garage2._0.AutoMapperConfig;
 using Garage2._0.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,8 @@ builder.Services.AddDbContext<Garage2_0Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Garage2_0Context") ?? throw new InvalidOperationException("Connection string 'Garage2_0Context' not found.")));
 
 
-builder.Services.AddSingleton<IValidation, Validation>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IVehicleTypeSelectListService, VehicleTypeSelectListService>();
 
 var app = builder.Build();
 

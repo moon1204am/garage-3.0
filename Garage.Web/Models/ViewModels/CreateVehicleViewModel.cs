@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage3._0.Models.ViewModels
+namespace Garage2._0.Models.ViewModels
 {
     public class CreateVehicleViewModel
     {
         public int VehicleId { get; set; }
-        //[ParkVehicleType]
         public int VehicleTypeId { get; set; }
         //[Required]
         //[Display(Name = "Vehicle type")]
@@ -32,9 +31,12 @@ namespace Garage3._0.Models.ViewModels
         [Required]
         [Range(0, 12)]
         public int? Wheels { get; set; }
+        //[Required]
+        //public IEnumerable<SelectListItem> VehicleTypes { get; set; } = new List<SelectListItem>();
+
+        public IEnumerable<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         [Required]
-        public IEnumerable<SelectListItem> VehicleTypes { get; set; } = new List<SelectListItem>();
-        [Required]
+        [CheckSSN]
         [Display(Name = "Social security number")]
         public string PersonSSN { get; set; } = string.Empty;
 

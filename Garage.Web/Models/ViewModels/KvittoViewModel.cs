@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace Garage3._0.Models.ViewModels
+namespace Garage2._0.Models.ViewModels
 {
     public class KvittoViewModel
     {
-        public  int Id  { get; set; }
+        public int Id { get; set; }
 
         [Display(Name = "Registreringsnummer")]
         public string RegNr { get; set; }
@@ -18,11 +18,11 @@ namespace Garage3._0.Models.ViewModels
 
         [Display(Name = "Total parkeringstid")]
         public string ParkeringsTid { get; set; }
-        
+
         [Display(Name = "Pris/timme")]
         public int Pris { get; set; }
 
         [Display(Name = "Total pris")]
-        public  int TotalPris { get; set; }
+        public int TotalPris { get; set; }
     }
 }

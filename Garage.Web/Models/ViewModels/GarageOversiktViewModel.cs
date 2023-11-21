@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Garage3._0.Models.ViewModels
+namespace Garage2._0.Models.ViewModels
 {
     public class GarageOversiktViewModel
     {
