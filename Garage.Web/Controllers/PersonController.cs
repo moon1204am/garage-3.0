@@ -56,26 +56,25 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
         {
+            if (_context.Person.Any(p => p.SSN == person.SSN))
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "The number is already in used.");
+            }
+
+            if (Under18Check(person.SSN))
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "You must be over 18 years old.");
+            }
+
             if (person.FirstName == person.LastName)
             {
                 ModelState.AddModelError(nameof(person.FirstName),
                                          "First name can be the same as last name.");
             }
 
-            if(_context.Person.Any(p => p.SSN == person.SSN))
-            {
-                ModelState.AddModelError(nameof(person.SSN),
-                                         "The number is already in used.");
-            }
-
-            if(Under18Check(person.SSN)) 
-            {
-                ModelState.AddModelError(nameof(person.SSN),
-                                         "You must be over 18 years old.");
-            }
-            
-            
-            if (ModelState.IsValid /*&& !Under18Check(person.SSN)*/)
+            if (ModelState.IsValid)
             {
                     _context.Add(person);
                     await _context.SaveChangesAsync();
@@ -114,6 +113,12 @@ namespace Garage2._0.Controllers
             if (id != person.PersonId)
             {
                 return NotFound();
+            }
+
+            if (person.FirstName == person.LastName)
+            {
+                ModelState.AddModelError(nameof(person.FirstName),
+                                         "First name can be the same as last name.");
             }
 
             if (ModelState.IsValid)
@@ -176,18 +181,6 @@ namespace Garage2._0.Controllers
             }
             
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool NameCheck(string firstName, string lastName)
-        {
-            return (firstName != lastName);
-        }
-
-        private bool SSNExistedValidation(string sSN)
-        {
-            var person = _context.Person.FirstOrDefaultAsync(p => p.SSN == sSN);
-            if (person == null) return false;  
-            return true;
         }
 
         private bool Under18Check(string ssn)
