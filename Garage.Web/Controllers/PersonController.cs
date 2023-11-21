@@ -1,7 +1,10 @@
-﻿using Garage.Data.Data;
+﻿using Bogus.DataSets;
+using Garage.Data.Data;
 using Garage.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using System.Text;
 
 namespace Garage2._0.Controllers
 {
@@ -53,29 +56,37 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
         {
-            //if (SSNExistedValidation(person.SSN))
-            //{
-            //    ModelState.AddModelError("SSN", "SSN is already existed.");
-            //    return View();
-            //}
-            
-            if (ModelState.IsValid && SSNExistedValidation(person.SSN) && CheckName(person.FirstName, person.LastName))
+            if (person.FirstName == person.LastName)
             {
-                _context.Add(person);
-                await _context.SaveChangesAsync();
-                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(nameof(person.FirstName),
+                                         "First name can be the same as last name.");
+            }
+
+            if(_context.Person.Any(p => p.SSN == person.SSN))
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "The number is already in used.");
+            }
+
+            if(Under18Check(person.SSN)) 
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "You must be over 18 years old.");
+            }
+            
+            
+            if (ModelState.IsValid /*&& !Under18Check(person.SSN)*/)
+            {
+                    _context.Add(person);
+                    await _context.SaveChangesAsync();
+                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
+                    return RedirectToAction(nameof(Index));
             }
             
             return View(person);
         }
 
-        private bool SSNExistedValidation(string sSN)
-        {
-            var person = _context.Person.FirstOrDefaultAsync(p => p.SSN == sSN);
-            if (person == null) { return true; }
-            return false;
-        }
+        
 
         // GET: Person/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -167,16 +178,29 @@ namespace Garage2._0.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CheckName(string firstName, string lastName)
+        private bool NameCheck(string firstName, string lastName)
         {
             return (firstName != lastName);
         }
 
-        //private bool CheckAge(string ssn)
-        //{
-            
-        //}
-        
+        private bool SSNExistedValidation(string sSN)
+        {
+            var person = _context.Person.FirstOrDefaultAsync(p => p.SSN == sSN);
+            if (person == null) return false;  
+            return true;
+        }
+
+        private bool Under18Check(string ssn)
+        {
+            var birthday = $"{ssn.Substring(4,2)}/{ssn.Substring(6,2)}/{ssn.Substring(0,4)}";
+            var today = DateTime.Today.Date;
+            var years = (today - DateTime.Parse(birthday)).Days/365;
+
+            if(years > 18) return false;
+            return true;
+        }
+
+
         private bool PersonExists(int id)
         {
           return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
