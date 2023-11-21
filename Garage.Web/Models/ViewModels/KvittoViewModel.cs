@@ -24,5 +24,11 @@ namespace Garage3._0.Models.ViewModels
 
         [Display(Name = "Total pris")]
         public  int TotalPris { get; set; }
+
+        [Display(Name = "Firstname")]
+        public string FirstName { get; set; } = string.Empty;
+        [Display(Name = "Lastname")]
+        public string LastName { get; set; } = string.Empty;
+
     }
 }

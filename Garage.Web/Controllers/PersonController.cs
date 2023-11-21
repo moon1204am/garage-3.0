@@ -64,7 +64,16 @@ namespace Garage2._0.Controllers
                 return NotFound();
             }
 
-            return View(person);
+            var personDetailsViewModel = new PersonDetailsViewModel
+            {
+                SSN = person.SSN,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                PersonId = person.PersonId,
+                Vehicles = await _context.Vehicle.Where(p => p.PersonId == person.PersonId).Include(v => v.VehicleType).ToListAsync()
+            };
+
+            return View(personDetailsViewModel);
         }
 
         // GET: Person/Create
