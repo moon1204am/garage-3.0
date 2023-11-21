@@ -58,13 +58,15 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
         {
-            if (ModelState.IsValid)
+            
+            if (ModelState.IsValid && CheckName(person.FirstName, person.LastName))
             {
                 _context.Add(person);
                 await _context.SaveChangesAsync();
                 TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} har registerats som medlem.";
                 return RedirectToAction(nameof(Index));
             }
+            
             return View(person);
         }
 
@@ -102,6 +104,7 @@ namespace Garage2._0.Controllers
                 {
                     _context.Update(person);
                     await _context.SaveChangesAsync();
+                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} har uppdaterat sina uppgifter.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -156,6 +159,11 @@ namespace Garage2._0.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private bool CheckName(string firstName, string lastName)
+        {
+            return (firstName != lastName);
+        }
+        
         private bool PersonExists(int id)
         {
           return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
