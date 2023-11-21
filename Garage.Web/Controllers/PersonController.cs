@@ -153,9 +153,10 @@ namespace Garage2._0.Controllers
             if (person != null)
             {
                 _context.Person.Remove(person);
+                await _context.SaveChangesAsync();
+                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has closed the membership.";
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
