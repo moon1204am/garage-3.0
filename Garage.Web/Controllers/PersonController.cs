@@ -185,11 +185,12 @@ namespace Garage2._0.Controllers
 
         private bool Under18Check(string ssn)
         {
+            //birthday = mm/dd/yyyy
             var birthday = $"{ssn.Substring(4,2)}/{ssn.Substring(6,2)}/{ssn.Substring(0,4)}";
             var today = DateTime.Today.Date;
             var years = (today - DateTime.Parse(birthday)).Days/365;
 
-            if(years > 18) return false;
+            if(years >= 18) return false;
             return true;
         }
 
