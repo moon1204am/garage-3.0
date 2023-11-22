@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage3._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class FordonViewModel
     {

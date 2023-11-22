@@ -13,6 +13,7 @@ using Garage.Domain.Entities;
 using Person = Garage.Domain.Entities.Person;
 using System.ComponentModel.DataAnnotations;
 using Bogus.Extensions.UnitedKingdom;
+using System.Runtime.Intrinsics.X86;
 
 namespace Garage.Data
 {
@@ -31,10 +32,23 @@ namespace Garage.Data
             var types = GenerateVehicleTypes();
             await db.AddRangeAsync(types);
 
-            var vehicles = GenerateVehicles(persons, types);
+            var vehicles = GenerateVehicles(persons, types.ToList());
             await db.AddRangeAsync(vehicles);
 
+            var parkingSpots = GenerateParkingSpots(GarageSettings.capacity);
+            await db.AddRangeAsync(parkingSpots);
+
             await db.SaveChangesAsync();
+        }
+
+        private static IEnumerable<ParkingSpot> GenerateParkingSpots(int capacity)
+        {
+            var parkingSpots = new List<ParkingSpot>();
+            for(int i = 0; i < capacity; i++)
+            {
+                parkingSpots.Add(new ParkingSpot());
+            }
+            return parkingSpots;
         }
 
         private static IEnumerable<Person> GeneratePersons(int numberOfPersons)
@@ -43,13 +57,14 @@ namespace Garage.Data
 
             for (int i = 0; i < numberOfPersons; i++)
             {
+                var bogusPerson = new Bogus.Person();
                       
                  var person = new Person
-                    {
+                 {
                          FirstName = faker.Name.FirstName(),
                          LastName = faker.Name.LastName(),
-                         SSN = faker.Person.Personnummer()
-                    };
+                         SSN = bogusPerson.Personnummer()
+                 };
 
             students.Add(person);
             }
@@ -71,9 +86,10 @@ namespace Garage.Data
             return vehicleTypes;
         }
 
-        private static IEnumerable<Domain.Entities.Vehicle> GenerateVehicles(IEnumerable<Person> persons, IEnumerable<VehicleType> vehicleTypes)
+        private static IEnumerable<Domain.Entities.Vehicle> GenerateVehicles(IEnumerable<Person> persons, List<VehicleType> vehicleTypes)
         {
             var vehicles = new List<Domain.Entities.Vehicle>();
+            
             foreach (var person in persons)
             {
                 foreach(var type in vehicleTypes)
@@ -86,7 +102,7 @@ namespace Garage.Data
                         Model = faker.Vehicle.Model(),
                         Wheels = faker.Random.Int(0, 10),
                         Person = person,
-                        VehicleType = type
+                        VehicleType = vehicleTypes[faker.Random.Int(0, vehicleTypes.Count - 1)]
 
                     };
                     vehicles.Add(vehicle);

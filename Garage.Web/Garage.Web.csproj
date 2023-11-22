@@ -4,21 +4,11 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Garage2._0</RootNamespace>
+    <RootNamespace>Garage.Web</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\ParkedVehicles\**" />
-    <Content Remove="Views\ParkedVehicles\**" />
-    <EmbeddedResource Remove="Views\ParkedVehicles\**" />
-    <None Remove="Views\ParkedVehicles\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Controllers\ParkedVehiclesController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

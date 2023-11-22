@@ -7,23 +7,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
 using Garage.Data.Data;
+using AutoMapper;
+using Garage.Web.Models.ViewModels;
+using Garage.Web.Services;
 
-namespace Garage3._0.Controllers
+namespace Garage.Web.Controllers
 {
     public class VehiclesController : Controller
     {
         private readonly Garage2_0Context _context;
+        private readonly IMapper mapper;
+        private readonly IValidationService validation;
 
-        public VehiclesController(Garage2_0Context context)
+        public VehiclesController(Garage2_0Context context, IMapper mapper, IValidationService validation)
         {
             _context = context;
+            this.mapper = mapper;
+            this.validation = validation;
         }
 
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
-            var garage2_0Context = _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType);
-            return View(await garage2_0Context.ToListAsync());
+            var model = new VehiclesOverviewViewModel
+            {
+                Vehicles = await GetAllVehicles()
+            };
+            return View(model);
         }
 
         // GET: Vehicles/Details/5
@@ -47,10 +57,8 @@ namespace Garage3._0.Controllers
         }
 
         // GET: Vehicles/Create
-        public IActionResult Create()
+        public ActionResult Create()
         {
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName");
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size");
             return View();
         }
 
@@ -59,18 +67,84 @@ namespace Garage3._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VehicleId,LicenseNr,Color,Brand,Model,Wheels,Arrival,ParkingIndex,VehicleTypeId,PersonId")] Vehicle vehicle)
+        public async Task<IActionResult> Create(CreateVehicleViewModel createVehicleViewModel)
         {
             if (ModelState.IsValid)
             {
+                var vehicle = mapper.Map<Vehicle>(createVehicleViewModel);
+                var owner = _context.Person.FirstOrDefault(p => p.SSN == createVehicleViewModel.PersonSSN);
+                vehicle.Person = owner;
                 _context.Add(vehicle);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
-            return View(vehicle);
+            return View(createVehicleViewModel);
         }
+
+        //Get
+        public async Task<ActionResult> Park(VehiclesOverviewViewModel vehiclesOverviewView)
+        {
+            if (ModelState.IsValid)
+            {
+                var person = _context.Person.Include(p => p.Vehicles).FirstOrDefault(p => p.SSN == vehiclesOverviewView.SSN);
+                if (person != null)
+                {
+                    var parkIndexViewModel = new ParkVehicleViewModel
+                    {
+                        Vehicles = GetPersonVehicles(person.Vehicles)
+                    };
+
+                    return View(parkIndexViewModel);
+                }
+            }
+            vehiclesOverviewView.Vehicles = await GetAllVehicles();
+            return View(nameof(Index), vehiclesOverviewView);
+        }
+
+        private async Task<IEnumerable<Vehicle>> GetAllVehicles()
+        {
+            return await _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).ToListAsync();
+        }
+
+        private IEnumerable<SelectListItem> GetPersonVehicles(IEnumerable<Vehicle> personVehicles)
+        {
+
+            return personVehicles.Where(v => v.IsParked == false).Select(v => new SelectListItem
+            {
+                Text = v.LicenseNr,
+                Value = v.VehicleId.ToString()
+            }).ToList();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Park(ParkVehicleViewModel parkIndexViewModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                //get chosen vehicle to park
+                var vehicleToPark = await _context.Vehicle.Include(v => v.Person).FirstOrDefaultAsync(v => v.VehicleId == parkIndexViewModel.VehicleId);
+                // get free spots
+                var freeParkingSpot = validation.FoundParkingSpot;
+                // add spots to persons parkingspots list
+                foreach (var spot in freeParkingSpot)
+                {
+                    spot.Arrival = DateTime.Now;
+                    vehicleToPark.ParkingSpots.Add(spot);
+                }
+                vehicleToPark.IsParked = true;
+                _context.Update(vehicleToPark);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            // FIX!!!!!!!!!!
+            //parkIndexViewModel.Vehicles = GetPersonVehicles();
+            return View(parkIndexViewModel);
+        }
+
+
 
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -161,14 +235,14 @@ namespace Garage3._0.Controllers
             {
                 _context.Vehicle.Remove(vehicle);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool VehicleExists(int id)
         {
-          return (_context.Vehicle?.Any(e => e.VehicleId == id)).GetValueOrDefault();
+            return (_context.Vehicle?.Any(e => e.VehicleId == id)).GetValueOrDefault();
         }
     }
 }

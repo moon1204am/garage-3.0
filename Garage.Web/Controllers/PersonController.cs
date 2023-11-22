@@ -1,17 +1,10 @@
-﻿using Bogus.DataSets;
-using Garage.Data.Data;
+﻿using Garage.Data.Data;
 using Garage.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
-using System.Text;
 using Garage.Web.Models.ViewModels;
-using Garage3._0.Models.ViewModels;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Collections;
-using System.Drawing.Printing;
 
-namespace Garage2._0.Controllers
+namespace Garage.Web.Controllers
 {
     public class PersonController : Controller
     {
@@ -26,7 +19,7 @@ namespace Garage2._0.Controllers
         // GET: Person
         public async Task<IActionResult> Index(int page = 0)
         {
-            
+
             var selection = await _context.Person.Select(v => new PersonOverViewViewModel
 
             {
@@ -38,23 +31,23 @@ namespace Garage2._0.Controllers
             }).OrderByDescending(p => p.FirstName.Substring(0, 2))
              .ToListAsync();
 
-            selection.Reverse();         
+            selection.Reverse();
             var count = selection.Count;
-  
+
             var index = new PersonIndexViewModel
             {
                 Members = selection.Skip(page * PageSize).Take(PageSize).ToList()
             };
-                  
-            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+
+            ViewBag.MaxPage = count / PageSize - (count % PageSize == 0 ? 1 : 0);
             ViewBag.Page = page;
             return View(index);
         }
 
 
 
-            
-        
+
+
 
         // GET: Person/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -116,16 +109,16 @@ namespace Garage2._0.Controllers
 
             if (ModelState.IsValid)
             {
-                    _context.Add(person);
-                    await _context.SaveChangesAsync();
-                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
-                    return RedirectToAction(nameof(Index));
+                _context.Add(person);
+                await _context.SaveChangesAsync();
+                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
+                return RedirectToAction(nameof(Index));
             }
-            
+
             return View(person);
         }
 
-        
+
 
         // GET: Person/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -219,29 +212,29 @@ namespace Garage2._0.Controllers
                 await _context.SaveChangesAsync();
                 TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has closed the membership.";
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool Under18Check(string ssn)
         {
-            var birthday = $"{ssn.Substring(4,2)}/{ssn.Substring(6,2)}/{ssn.Substring(0,4)}";
+            var birthday = $"{ssn.Substring(4, 2)}/{ssn.Substring(6, 2)}/{ssn.Substring(0, 4)}";
             var today = DateTime.Today.Date;
-            var years = (today - DateTime.Parse(birthday)).Days/365;
+            var years = (today - DateTime.Parse(birthday)).Days / 365;
 
-            if(years > 18) return false;
+            if (years > 18) return false;
             return true;
         }
 
 
         private bool PersonExists(int id)
         {
-          return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
+            return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
         }
 
         public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel, int page = 0)
         {
-            
+
             var query = string.IsNullOrWhiteSpace(personIndexViewModel.LastName) ?
                                                _context.Person :
                                                _context.Person.Where(p => p.LastName.StartsWith(personIndexViewModel.LastName));
@@ -263,8 +256,8 @@ namespace Garage2._0.Controllers
             {
                 Members = tempData.Skip(page * PageSize).Take(PageSize).ToList()
             };
-  
-            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+
+            ViewBag.MaxPage = count / PageSize - (count % PageSize == 0 ? 1 : 0);
             ViewBag.Page = page;
             return View(nameof(Index), querySelect);
         }

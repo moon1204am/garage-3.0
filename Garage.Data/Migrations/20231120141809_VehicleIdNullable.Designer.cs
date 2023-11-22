@@ -4,6 +4,7 @@ using Garage.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage.Data.Migrations
 {
     [DbContext(typeof(Garage2_0Context))]
-    partial class Garage2_0ContextModelSnapshot : ModelSnapshot
+    [Migration("20231120141809_VehicleIdNullable")]
+    partial class VehicleIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,9 +88,6 @@ namespace Garage.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<bool>("IsParked")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LicenseNr")
                         .IsRequired()

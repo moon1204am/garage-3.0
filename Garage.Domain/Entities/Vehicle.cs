@@ -5,20 +5,16 @@ namespace Garage.Domain.Entities
 {
     public class Vehicle
     {
-
         public int VehicleId { get; set; }
         [Required]
         [Display(Name = "Registrations number")]
         public string LicenseNr { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Color")]
         public string Color { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Brand")]
         public string Brand { get; set; } = string.Empty;
-        [StringLength(20)][Display(Name = "Model")] 
+        [StringLength(20)]
         public string Model { get; set; } = string.Empty;
-        [Display(Name = "Wheels")]
         [Range(0, 12)]
         public int? Wheels { get; set; }
         //FK
@@ -28,7 +24,9 @@ namespace Garage.Domain.Entities
         public Person Person { get; set; } = new Person();
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
         [Display(Name = "Vehicle type")]
-        public VehicleType VehicleType { get; set; } = new VehicleType();
+        public VehicleType VehicleType { get; set; }
+        [Required]
+        public bool IsParked { get; set; }
 
 
     }
