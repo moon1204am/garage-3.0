@@ -1,47 +1,39 @@
-﻿@model IEnumerable<Garage.Domain.Entities.Person>
+﻿@using Garage.Web.Models.ViewModels
+@model PersonIndexViewModel
+
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+<p class="alert-info"><strong>@TempData["OkFeedbackMsg"]</strong></p>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create new</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SSN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SSN)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PersonId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PersonId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PersonId">Delete</a>
-            </td>
-        </tr>
+<form asp-action="Filter" asp-controller="Person" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" asp-for="LastName" placeholder="Sök via Efternamn" />
+       
+        <div class="input-group-append">
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Sök</i></button>
+        </div>
+    </div>
+</form>
+<partial name="PersonListPartial" model="@Model.Members" />
+
+@if (ViewBag.Page > 0)
+{
+    <a href="@Url.Action("Index", new { page = ViewBag.Page - 1 })"
+       class="btn btn-default">
+        &laquo; Prev
+    </a>
 }
-    </tbody>
-</table>
+@if (ViewBag.Page < ViewBag.MaxPage)
+{
+    <a href="@Url.Action("Index", new { page = ViewBag.Page + 1 })"
+       class="btn btn-default">
+        Next &raquo;
+    </a>
+}

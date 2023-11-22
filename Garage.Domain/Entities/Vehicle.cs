@@ -7,6 +7,7 @@ namespace Garage.Domain.Entities
     {
         public int VehicleId { get; set; }
         [Required]
+        [Display(Name = "Registrations number")]
         public string LicenseNr { get; set; } = string.Empty;
         [StringLength(20)]
         public string Color { get; set; } = string.Empty;
@@ -22,7 +23,7 @@ namespace Garage.Domain.Entities
         //Nav prop
         public Person Person { get; set; } = new Person();
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
-        [Display(Name = "Fordons typ")]
+        [Display(Name = "Vehicle type")]
         public VehicleType VehicleType { get; set; }
         [Required]
         public bool IsParked { get; set; }
