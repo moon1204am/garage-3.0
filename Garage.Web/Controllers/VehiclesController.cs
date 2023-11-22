@@ -144,8 +144,6 @@ namespace Garage.Web.Controllers
             return View(parkIndexViewModel);
         }
 
-
-
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

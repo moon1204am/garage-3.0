@@ -83,5 +83,10 @@ namespace Garage.Web.Services
         {
             return db.Person.Any(p => p.SSN == SSN);
         }
+
+        public bool LicenseNrExists(string licenseNr)
+        {
+            return db.Vehicle.FirstOrDefault(p => p.LicenseNr == licenseNr) != null;
+        }
     }
 }
