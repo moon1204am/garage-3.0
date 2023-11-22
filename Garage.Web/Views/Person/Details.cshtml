@@ -1,4 +1,6 @@
-﻿@model Garage.Domain.Entities.Person
+﻿@using Garage.Web.Models.ViewModels
+@using Garage.Domain.Entities
+@model PersonDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -35,3 +37,50 @@
     <a asp-action="Delete" asp-route-id="@Model?.PersonId">Delete</a> |
     <a asp-action="Index">Back to index</a>
 </div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                LicencePlate
+            </th>
+            <th>
+                Brand
+            </th>
+
+            <th>
+                Model
+            </th>
+            <th>
+                Type of Vehicle
+            </th>
+          
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Vehicles)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LicenseNr)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Brand)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleType.Type)
+                </td>
+
+                <td>
+                    <a asp-controller="Vehicles" asp-action="Delete" asp-route-id="@item.VehicleId">Delete Vehicle</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

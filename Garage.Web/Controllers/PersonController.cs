@@ -5,12 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using System.Text;
+using Garage.Web.Models.ViewModels;
+using Garage3._0.Models.ViewModels;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Collections;
+using System.Drawing.Printing;
 
 namespace Garage2._0.Controllers
 {
     public class PersonController : Controller
     {
         private readonly Garage2_0Context _context;
+        const int PageSize = 3;
 
         public PersonController(Garage2_0Context context)
         {
@@ -18,12 +24,37 @@ namespace Garage2._0.Controllers
         }
 
         // GET: Person
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 0)
         {
-              return _context.Person != null ? 
-                          View(await _context.Person.ToListAsync()) :
-                          Problem("Entity set 'Garage2_0Context.Person'  is null.");
+            
+            var selection = await _context.Person.Select(v => new PersonOverViewViewModel
+
+            {
+                PersonId = v.PersonId,
+                FirstName = v.FirstName,
+                LastName = v.LastName,
+                SSN = v.SSN,
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+            }).OrderByDescending(p => p.FirstName.Substring(0, 2))
+             .ToListAsync();
+
+            selection.Reverse();         
+            var count = selection.Count;
+  
+            var index = new PersonIndexViewModel
+            {
+                Members = selection.Skip(page * PageSize).Take(PageSize).ToList()
+            };
+                  
+            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+            ViewBag.Page = page;
+            return View(index);
         }
+
+
+
+            
+        
 
         // GET: Person/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -40,7 +71,16 @@ namespace Garage2._0.Controllers
                 return NotFound();
             }
 
-            return View(person);
+            var personDetailsViewModel = new PersonDetailsViewModel
+            {
+                SSN = person.SSN,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                PersonId = person.PersonId,
+                Vehicles = await _context.Vehicle.Where(p => p.PersonId == person.PersonId).Include(v => v.VehicleType).ToListAsync()
+            };
+
+            return View(personDetailsViewModel);
         }
 
         // GET: Person/Create
@@ -198,6 +238,36 @@ namespace Garage2._0.Controllers
         private bool PersonExists(int id)
         {
           return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel, int page = 0)
+        {
+            
+            var query = string.IsNullOrWhiteSpace(personIndexViewModel.LastName) ?
+                                               _context.Person :
+                                               _context.Person.Where(p => p.LastName.StartsWith(personIndexViewModel.LastName));
+
+            var tempData = await query.Select(v => new PersonOverViewViewModel
+            {
+                PersonId = v.PersonId,
+                FirstName = v.FirstName,
+                LastName = v.LastName,
+                SSN = v.SSN,
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+            }).OrderByDescending(p => p.FirstName.Substring(0, 2))
+             .ToListAsync();
+
+            tempData.Reverse();
+            var count = tempData.Count;
+
+            var querySelect = new PersonIndexViewModel
+            {
+                Members = tempData.Skip(page * PageSize).Take(PageSize).ToList()
+            };
+  
+            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+            ViewBag.Page = page;
+            return View(nameof(Index), querySelect);
         }
     }
 }

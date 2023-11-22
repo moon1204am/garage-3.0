@@ -1,19 +1,22 @@
-﻿using Garage.Domain.Entities;
-using Garage3._0.Models.ViewModels;
+﻿
+using Garage.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage.Web.Models.ViewModels
+namespace Garage3._0.Models.ViewModels
 {
-    public class PersonDetailsViewModel
+    public class PersonOverViewViewModel
     {
-        public IEnumerable<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         public int PersonId { get; set; }
-        [Display(Name = "SSN")]
+        [Display(Name = "Personnummer")]
         public string SSN { get; set; } = string.Empty;
         [Display(Name = "Firstname")]
         public string FirstName { get; set; } = string.Empty;
         [Display(Name = "Lastname")]
         public string LastName { get; set; } = string.Empty;
-   
+        [Display(Name = "Antal Parkerade Fordon")]
+        public int NumberOfParkedVehicles { get; set; }
+
+
+       
     }
 }
