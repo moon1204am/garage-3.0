@@ -1,8 +1,7 @@
-﻿using Bogus.DataSets;
-using Garage2._0.Validations;
+﻿using Garage.Web.Validations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Garage2._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class ParkVehicleViewModel
     {

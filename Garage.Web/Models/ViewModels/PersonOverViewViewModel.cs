@@ -1,8 +1,6 @@
-﻿
-using Garage.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Garage3._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class PersonOverViewViewModel
     {
@@ -17,6 +15,6 @@ namespace Garage3._0.Models.ViewModels
         public int NumberOfParkedVehicles { get; set; }
 
 
-       
+
     }
 }

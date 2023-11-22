@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
 using Garage.Data.Data;
 using AutoMapper;
-using Garage2._0.Services;
-using Garage2._0.Models.ViewModels;
+using Garage.Web.Models.ViewModels;
+using Garage.Web.Services;
 
-namespace Garage2._0.Controllers
+namespace Garage.Web.Controllers
 {
     public class VehiclesController : Controller
     {
@@ -121,7 +121,7 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Park(ParkVehicleViewModel parkIndexViewModel)
         {
-            
+
             if (ModelState.IsValid)
             {
                 //get chosen vehicle to park

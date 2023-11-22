@@ -1,7 +1,7 @@
 ﻿using Garage.Data.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Garage2._0.Services
+namespace Garage.Web.Services
 {
     //public class PersonVehiclesSelectListService : IPersonVehiclesSelectListService
     //{
@@ -13,7 +13,7 @@ namespace Garage2._0.Services
     //    }
     //    public List<SelectListItem> GetPersonVehicles(int personId)
     //    {
-            
+
     //        return db.Person
     //            .Select(p => p.Vehicles)
     //            .Select(v => new SelectListItem

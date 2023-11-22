@@ -1,7 +1,7 @@
 ﻿using Garage.Domain.Entities;
-using Garage2._0.Validations;
+using Garage.Web.Validations;
 
-namespace Garage2._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class VehiclesOverviewViewModel
     {

@@ -1,10 +1,8 @@
 ﻿using Garage.Domain.Entities;
-using Garage2._0.Validations;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Garage.Web.Validations;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage2._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class CreateVehicleViewModel
     {

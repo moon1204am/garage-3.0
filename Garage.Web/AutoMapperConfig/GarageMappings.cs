@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Garage.Domain.Entities;
-using Garage2._0.Models.ViewModels;
+using Garage.Web.Models.ViewModels;
 
-namespace Garage2._0.AutoMapperConfig
+namespace Garage.Web.AutoMapperConfig
 {
     public class GarageMappings : Profile
     {

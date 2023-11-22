@@ -1,8 +1,6 @@
-﻿using Garage2._0.Services;
-using Garage2._0.Models.ViewModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Garage2._0.Validations
+namespace Garage.Web.Validations
 {
     //public class ParkVehicleType : ValidationAttribute
     //{

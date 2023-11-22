@@ -4,7 +4,7 @@ using Garage.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging.Signing;
 
-namespace Garage2._0.Services
+namespace Garage.Web.Services
 {
     public class ValidationService : IValidationService
     {

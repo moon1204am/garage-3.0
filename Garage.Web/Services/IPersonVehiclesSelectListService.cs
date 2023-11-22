@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Garage2._0.Services
+namespace Garage.Web.Services
 {
     public interface IPersonVehiclesSelectListService
     {

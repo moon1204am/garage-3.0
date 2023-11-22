@@ -1,8 +1,8 @@
-﻿using Garage2._0.Models.ViewModels;
-using Garage2._0.Services;
+﻿using Garage.Web.Models.ViewModels;
+using Garage.Web.Services;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage2._0.Validations
+namespace Garage.Web.Validations
 {
     public class CheckSSN : ValidationAttribute
     {

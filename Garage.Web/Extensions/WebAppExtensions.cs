@@ -1,7 +1,7 @@
 ﻿using Garage.Data.Data;
 using Garage.Data;
 using Microsoft.EntityFrameworkCore;
-namespace Garage2._0.Extensions
+namespace Garage.Web.Extensions
 {
 
     public static class WebAppExtensions

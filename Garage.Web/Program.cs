@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Garage.Data.Data;
-using Garage2._0.Extensions;
-using Garage2._0.AutoMapperConfig;
-using Garage2._0.Services;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Garage.Web.Services;
+using Garage.Web.AutoMapperConfig;
+using Garage.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

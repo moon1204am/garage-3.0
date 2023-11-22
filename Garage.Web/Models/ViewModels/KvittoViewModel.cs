@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace Garage2._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class KvittoViewModel
     {
@@ -23,7 +23,7 @@ namespace Garage2._0.Models.ViewModels
         public int Pris { get; set; }
 
         [Display(Name = "Total pris")]
-        public  int TotalPris { get; set; }
+        public int TotalPris { get; set; }
 
         [Display(Name = "Firstname")]
         public string FirstName { get; set; } = string.Empty;

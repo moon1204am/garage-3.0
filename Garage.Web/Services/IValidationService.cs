@@ -1,6 +1,6 @@
 ﻿using Garage.Domain.Entities;
 
-namespace Garage2._0.Services
+namespace Garage.Web.Services
 {
     public interface IValidationService
     {

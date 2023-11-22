@@ -2,7 +2,7 @@
 using Garage.Domain.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Garage2._0.Services
+namespace Garage.Web.Services
 {
     public class VehicleTypeSelectListService : IVehicleTypeSelectListService
     {
@@ -17,8 +17,8 @@ namespace Garage2._0.Services
             return db.VehicleType
                 .Select(t => new SelectListItem
                 {
-                Text = t.Type.ToString(),
-                Value = t.VehicleTypeId.ToString()
+                    Text = t.Type.ToString(),
+                    Value = t.VehicleTypeId.ToString()
                 })
                 .ToList();
         }

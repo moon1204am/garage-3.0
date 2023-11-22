@@ -1,7 +1,7 @@
 ﻿using Garage.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Garage2._0.Models.ViewModels
+namespace Garage.Web.Models.ViewModels
 {
     public class StartsidaViewModel
     {
