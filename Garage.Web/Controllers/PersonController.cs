@@ -87,35 +87,41 @@ namespace Garage.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
+        public async Task<IActionResult> Create(PersonViewModel personViewModel)
         {
-            if (_context.Person.Any(p => p.SSN == person.SSN))
+            if (_context.Person.Any(p => p.SSN == personViewModel.SSN))
             {
-                ModelState.AddModelError(nameof(person.SSN),
+                ModelState.AddModelError(nameof(personViewModel.SSN),
                                          "The number is already in used.");
             }
 
-            if (Under18Check(person.SSN))
+            if (Under18Check(personViewModel.SSN))
             {
-                ModelState.AddModelError(nameof(person.SSN),
+                ModelState.AddModelError(nameof(personViewModel.SSN),
                                          "You must be over 18 years old.");
             }
 
-            if (person.FirstName == person.LastName)
+            if (personViewModel.FirstName == personViewModel.LastName)
             {
-                ModelState.AddModelError(nameof(person.FirstName),
+                ModelState.AddModelError(nameof(personViewModel.FirstName),
                                          "First name can be the same as last name.");
             }
 
             if (ModelState.IsValid)
             {
+                var person = new Person
+                {
+                    SSN = personViewModel.SSN,
+                    FirstName = personViewModel.FirstName,
+                    LastName = personViewModel.LastName
+                };
                 _context.Add(person);
                 await _context.SaveChangesAsync();
                 TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(person);
+            return View(personViewModel);
         }
 
 
