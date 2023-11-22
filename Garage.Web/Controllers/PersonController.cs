@@ -115,10 +115,10 @@ namespace Garage2._0.Controllers
                 return NotFound();
             }
 
-            if (person.FirstName == person.LastName)
+            if (person.FirstName.ToUpper() == person.LastName.ToUpper())
             {
                 ModelState.AddModelError(nameof(person.FirstName),
-                                         "First name can be the same as last name.");
+                                         "First name can not be the same as last name.");
             }
 
             if (ModelState.IsValid)
