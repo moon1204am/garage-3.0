@@ -18,6 +18,7 @@ namespace Garage2._0.Controllers
     public class PersonController : Controller
     {
         private readonly Garage2_0Context _context;
+        const int PageSize = 3;
 
         public PersonController(Garage2_0Context context)
         {
@@ -27,7 +28,7 @@ namespace Garage2._0.Controllers
         // GET: Person
         public async Task<IActionResult> Index(int page = 0)
         {
-            const int PageSize = 3;
+            
             var selection = await _context.Person.Select(v => new PersonOverViewViewModel
 
             {
@@ -201,7 +202,7 @@ namespace Garage2._0.Controllers
 
         public async Task<IActionResult> Filter(PersonIndexViewModel personIndexViewModel, int page = 0)
         {
-            const int PageSize = 3;
+            
             var query = string.IsNullOrWhiteSpace(personIndexViewModel.LastName) ?
                                                _context.Person :
                                                _context.Person.Where(p => p.LastName.StartsWith(personIndexViewModel.LastName));
