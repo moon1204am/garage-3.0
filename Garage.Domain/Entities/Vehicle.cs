@@ -8,17 +8,17 @@ namespace Garage.Domain.Entities
 
         public int VehicleId { get; set; }
         [Required]
-        [Display(Name = "Registreringsnummer")]
+        [Display(Name = "Registrations number")]
         public string LicenseNr { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Färg")]
+        [Display(Name = "Color")]
         public string Color { get; set; } = string.Empty;
         [StringLength(20)]
-        [Display(Name = "Märke")]
+        [Display(Name = "Brand")]
         public string Brand { get; set; } = string.Empty;
-        [StringLength(20)][Display(Name = "Modell")] 
+        [StringLength(20)][Display(Name = "Model")] 
         public string Model { get; set; } = string.Empty;
-        [Display(Name = "Antal hjul")]
+        [Display(Name = "Wheels")]
         [Range(0, 12)]
         public int? Wheels { get; set; }
         //FK
@@ -27,7 +27,7 @@ namespace Garage.Domain.Entities
         //Nav prop
         public Person Person { get; set; } = new Person();
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
-        [Display(Name = "Fordons typ")]
+        [Display(Name = "Vehicle type")]
         public VehicleType VehicleType { get; set; } = new VehicleType();
 
 

@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Bogus.DataSets;
 using Garage.Data.Data;
 using Garage.Domain.Entities;
-using Garage.Web.Models.ViewModels;
-using Garage3._0.Models.ViewModels;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Collections;
-using System.Drawing.Printing;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using System.Text;
 
 namespace Garage2._0.Controllers
 {
@@ -98,14 +91,36 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
         {
+            if (_context.Person.Any(p => p.SSN == person.SSN))
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "The number is already in used.");
+            }
+
+            if (Under18Check(person.SSN))
+            {
+                ModelState.AddModelError(nameof(person.SSN),
+                                         "You must be over 18 years old.");
+            }
+
+            if (person.FirstName == person.LastName)
+            {
+                ModelState.AddModelError(nameof(person.FirstName),
+                                         "First name can be the same as last name.");
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(person);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(person);
+                    await _context.SaveChangesAsync();
+                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
+                    return RedirectToAction(nameof(Index));
             }
+            
             return View(person);
         }
+
+        
 
         // GET: Person/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -135,12 +150,19 @@ namespace Garage2._0.Controllers
                 return NotFound();
             }
 
+            if (person.FirstName.ToUpper() == person.LastName.ToUpper())
+            {
+                ModelState.AddModelError(nameof(person.FirstName),
+                                         "First name can not be the same as last name.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(person);
                     await _context.SaveChangesAsync();
+                    TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has updated.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -189,11 +211,23 @@ namespace Garage2._0.Controllers
             if (person != null)
             {
                 _context.Person.Remove(person);
+                await _context.SaveChangesAsync();
+                TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has closed the membership.";
             }
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        private bool Under18Check(string ssn)
+        {
+            var birthday = $"{ssn.Substring(4,2)}/{ssn.Substring(6,2)}/{ssn.Substring(0,4)}";
+            var today = DateTime.Today.Date;
+            var years = (today - DateTime.Parse(birthday)).Days/365;
+
+            if(years > 18) return false;
+            return true;
+        }
+
 
         private bool PersonExists(int id)
         {

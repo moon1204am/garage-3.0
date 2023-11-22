@@ -6,10 +6,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Member Overview</h1>
+<h1>Index</h1>
+<p class="alert-info"><strong>@TempData["OkFeedbackMsg"]</strong></p>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create new</a>
 </p>
 <form asp-action="Filter" asp-controller="Person" method="get">
     <div class="input-group mb-3">
