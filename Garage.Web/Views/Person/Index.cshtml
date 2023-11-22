@@ -21,6 +21,16 @@
         </div>
     </div>
 </form>
+
+<form asp-action="Index" asp-controller="Person" method="get">
+    <div class="input-group mb-3">
+        <input type="number" class="form-control" asp-for="PageSize" placeholder="Select pagesize" />
+
+        <div class="input-group-append">
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Change</i></button>
+        </div>
+    </div>
+</form>
 <partial name="PersonListPartial" model="@Model.Members" />
 
 @if (ViewBag.Page > 0)

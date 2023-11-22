@@ -16,7 +16,7 @@ namespace Garage2._0.Controllers
     public class PersonController : Controller
     {
         private readonly Garage2_0Context _context;
-        const int PageSize = 3;
+     //   const int PageSize = 3;
 
         public PersonController(Garage2_0Context context)
         {
@@ -24,7 +24,7 @@ namespace Garage2._0.Controllers
         }
 
         // GET: Person
-        public async Task<IActionResult> Index(int page = 0)
+        public async Task<IActionResult> Index(int page = 0, int pageSize = 3)
         {
             
             var selection = await _context.Person.Select(v => new PersonOverViewViewModel
@@ -43,10 +43,10 @@ namespace Garage2._0.Controllers
   
             var index = new PersonIndexViewModel
             {
-                Members = selection.Skip(page * PageSize).Take(PageSize).ToList()
+                Members = selection.Skip(page * pageSize).Take(pageSize).ToList()
             };
                   
-            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+            ViewBag.MaxPage = (count / pageSize) - (count % pageSize == 0 ? 1 : 0);
             ViewBag.Page = page;
             return View(index);
         }
@@ -264,7 +264,7 @@ namespace Garage2._0.Controllers
                 Members = tempData.Skip(page * PageSize).Take(PageSize).ToList()
             };
   
-            ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
+            ViewBag.MaxPage = (count / personIndexViewModel.PageSize) - (count % PageSize == 0 ? 1 : 0);
             ViewBag.Page = page;
             return View(nameof(Index), querySelect);
         }

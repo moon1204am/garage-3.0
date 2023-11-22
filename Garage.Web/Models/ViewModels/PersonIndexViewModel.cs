@@ -10,6 +10,8 @@ namespace Garage.Web.Models.ViewModels
         public string LastName { get; set; } = string.Empty;
         public int PersonId { get; set; }
 
+        public int PageSize { get; set; }
+
 
 
     }
