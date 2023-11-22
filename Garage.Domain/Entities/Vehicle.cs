@@ -24,6 +24,8 @@ namespace Garage.Domain.Entities
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
         [Display(Name = "Fordons typ")]
         public VehicleType VehicleType { get; set; }
+        [Required]
+        public bool IsParked { get; set; }
 
 
     }

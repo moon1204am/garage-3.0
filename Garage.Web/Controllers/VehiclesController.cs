@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
 using Garage.Data.Data;
 using AutoMapper;
-//using Bogus.DataSets;
 using Garage2._0.Services;
 using Garage2._0.Models.ViewModels;
 
@@ -30,7 +29,6 @@ namespace Garage2._0.Controllers
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
-            //var vehicles = await _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).ToListAsync();
             var model = new VehiclesOverviewViewModel
             {
                 Vehicles = await GetAllVehicles()
@@ -61,19 +59,6 @@ namespace Garage2._0.Controllers
         // GET: Vehicles/Create
         public ActionResult Create()
         {
-            //var vehicles = await _context.VehicleType.ToListAsync();
-
-            //var createIndexViewModel = new CreateVehicleViewModel
-            //{
-                //VehicleTypes = vehicleTypeSelectListService.GetVehicleTypes(vehicles)
-                //Vehicles = vehicles
-
-            //};
-
-            //ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName");
-            //ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size");
-
-            //return View(createIndexViewModel);
             return View();
         }
 
@@ -94,13 +79,10 @@ namespace Garage2._0.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
-            //ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
-            //createVehicleViewModel.VehicleTypes = 
             return View(createVehicleViewModel);
         }
 
-
+        //Get
         public async Task<ActionResult> Park(VehiclesOverviewViewModel vehiclesOverviewView)
         {
             if (ModelState.IsValid)
@@ -128,7 +110,7 @@ namespace Garage2._0.Controllers
         private IEnumerable<SelectListItem> GetPersonVehicles(IEnumerable<Vehicle> personVehicles)
         {
 
-            return personVehicles.Select(v => new SelectListItem
+            return personVehicles.Where(v => v.IsParked == false).Select(v => new SelectListItem
             {
                 Text = v.LicenseNr,
                 Value = v.VehicleId.ToString()
@@ -139,10 +121,11 @@ namespace Garage2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Park(ParkVehicleViewModel parkIndexViewModel)
         {
+            
             if (ModelState.IsValid)
             {
                 //get chosen vehicle to park
-                var vehicleToPark = await _context.Vehicle.FirstOrDefaultAsync(v => v.VehicleId == parkIndexViewModel.VehicleId);
+                var vehicleToPark = await _context.Vehicle.Include(v => v.Person).FirstOrDefaultAsync(v => v.VehicleId == parkIndexViewModel.VehicleId);
                 // get free spots
                 var freeParkingSpot = validation.FoundParkingSpot;
                 // add spots to persons parkingspots list
@@ -151,10 +134,13 @@ namespace Garage2._0.Controllers
                     spot.Arrival = DateTime.Now;
                     vehicleToPark.ParkingSpots.Add(spot);
                 }
+                vehicleToPark.IsParked = true;
                 _context.Update(vehicleToPark);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            // FIX!!!!!!!!!!
+            //parkIndexViewModel.Vehicles = GetPersonVehicles();
             return View(parkIndexViewModel);
         }
 

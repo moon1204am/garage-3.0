@@ -51,17 +51,17 @@ namespace Garage2._0.Services
         public bool ParkingSpaceExists(int size)
         {
             var parkingSpots = db.ParkingSpot.ToList();
-
+            int n = 0;
             foreach (var parkingSpot in parkingSpots)
             {
-                var spots = parkingSpots.Take(size);
+                var spots = parkingSpots.Skip(n).Take(size);
                 var consecutives = FindConsecutiveParkingSpots(spots, size);
                 if (consecutives != null)
                 {
                     FoundParkingSpot = consecutives;
                     return true;
                 }
-                spots = spots.Skip(1);
+                n = 1;
             }
             return false;
             //var currentParkingSpot = parkingSpots.Select(p => p.VehicleId)
