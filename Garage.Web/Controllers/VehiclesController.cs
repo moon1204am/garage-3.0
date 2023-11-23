@@ -122,7 +122,6 @@ namespace Garage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Park(ParkVehicleViewModel parkIndexViewModel)
         {
-
             if (ModelState.IsValid)
             {
                 //get chosen vehicle to park
@@ -140,12 +139,76 @@ namespace Garage.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            // FIX!!!!!!!!!!
-            //parkIndexViewModel.Vehicles = GetPersonVehicles();
+
+            var person = _context.Person.Include(p => p.Vehicles).FirstOrDefault(p => p.SSN == parkIndexViewModel.SSN);
+            parkIndexViewModel.Vehicles = GetPersonVehicles(person.Vehicles);
             return View(parkIndexViewModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ParkMember(int id)
+        {
+            var size = validation.GetSizeFromId(id);
+            var freeSpotsExists = validation.ParkingSpaceExists(size);
 
+            if(!freeSpotsExists)
+            {
+                ModelState.AddModelError("No free spots exists.", freeSpotsExists.ToString());
+                return View();
+            }
+            if (ModelState.IsValid)
+            {
+                var vehicleToPark = await _context.Vehicle.Include(v => v.Person).FirstOrDefaultAsync(v => v.VehicleId == id);
+                var freeParkingSpot = validation.FoundParkingSpot;
+
+                foreach (var spot in freeParkingSpot)
+                {
+                    spot.Arrival = DateTime.Now;
+                    vehicleToPark.ParkingSpots.Add(spot);
+                }
+                vehicleToPark.IsParked = true;
+                _context.Update(vehicleToPark);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(nameof(Details), nameof(Person));
+        }
+
+        public async Task<IActionResult> Checkout(int? id) 
+        { 
+            if(id == null)
+            {
+                return NotFound();
+            }
+            var vehicleToCheckout = await _context.Vehicle
+                .FirstOrDefaultAsync(v => v.VehicleId == id);
+
+            if (vehicleToCheckout == null)
+            {
+                return NotFound();
+            }
+            return View(vehicleToCheckout); 
+        }
+
+        [HttpPost, ActionName("Checkout")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Checkout(int id)
+        {
+            var vehicleToCheckout = _context.Vehicle.Include(v => v.ParkingSpots).FirstOrDefault(v => v.VehicleId == id);
+
+            if (vehicleToCheckout != null && vehicleToCheckout.ParkingSpots != null)
+            {
+                foreach(var spot in vehicleToCheckout.ParkingSpots.ToList())
+                {
+                    vehicleToCheckout.ParkingSpots.Remove(spot);
+                }
+                vehicleToCheckout.IsParked = false;
+                
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index), nameof(Person));
+        }
 
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -270,6 +333,35 @@ namespace Garage.Web.Controllers
                 FreeSpots = GarageSettings.capacity - vehicles.Count(),
             };
             return View(nameof(Index), vehicleModel);
+        }
+
+        public IActionResult CreateVehicleType()
+        {
+            return View();
+        }
+
+        // POST: VehicleTypes/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateVehicleType([Bind("VehicleTypeId,Type,Size")] VehicleType vehicleType)
+        {
+            
+            if (_context.VehicleType.Any(p => p.Type == vehicleType.Type))
+            {
+                ModelState.AddModelError(nameof(vehicleType.Type),
+                                         "The Type already exists.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(vehicleType);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(vehicleType);
         }
     }
 }

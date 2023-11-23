@@ -61,7 +61,7 @@ namespace Garage.Web.Services
                     FoundParkingSpot = consecutives;
                     return true;
                 }
-                n = 1;
+                n++;
             }
             return false;
             //var currentParkingSpot = parkingSpots.Select(p => p.VehicleId)
@@ -82,6 +82,11 @@ namespace Garage.Web.Services
         public bool SSNExists(string SSN)
         {
             return db.Person.Any(p => p.SSN == SSN);
+        }
+
+        public bool LicenseNrExists(string licenseNr)
+        {
+            return db.Vehicle.FirstOrDefault(p => p.LicenseNr == licenseNr) != null;
         }
     }
 }
