@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
@@ -32,7 +28,7 @@ namespace Garage.Web.Controllers
         {
             var model = new VehiclesOverviewViewModel
             {
-                Vehicles = await GetAllVehicles()
+                ParkedVehiclesViewModel = await GetAllParkedVehicles()
             };
             return View(model);
         }
@@ -99,14 +95,26 @@ namespace Garage.Web.Controllers
                     return View(parkIndexViewModel);
                 }
             }
-            vehiclesOverviewView.Vehicles = await GetAllVehicles();
+            vehiclesOverviewView.ParkedVehiclesViewModel = await GetAllParkedVehicles();
             return View(nameof(Index), vehiclesOverviewView);
         }
 
-        private async Task<IEnumerable<Vehicle>> GetAllVehicles()
+        private async Task<IEnumerable<ParkedVehiclesViewModel>> GetAllParkedVehicles()
         {
-            return await _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).ToListAsync();
+            var parkedVehicles = _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).Include(v => v.ParkingSpots).Where(v => v.IsParked == true);
+
+            return await parkedVehicles.Select(p => new ParkedVehiclesViewModel
+                                            {
+                                                VehicleId = p.VehicleId,
+                                                FirstName = p.Person.FirstName,
+                                                LastName =p.Person.LastName,
+                                                VehicleType = p.VehicleType.Type,
+                                                LicenseNr = p.LicenseNr,
+                                                ParkingTime = DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()
+
+                                            }).ToListAsync();
         }
+
 
         private IEnumerable<SelectListItem> GetPersonVehicles(IEnumerable<Vehicle> personVehicles)
         {
@@ -210,6 +218,11 @@ namespace Garage.Web.Controllers
             return RedirectToAction(nameof(Index), nameof(Person));
         }
 
+        public IActionResult ParkExisting()
+        {
+            return View();
+        }
+
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -311,16 +324,18 @@ namespace Garage.Web.Controllers
 
         public async Task<IActionResult> Filter(VehiclesOverviewViewModel vehiclesOverviewViewModel)
         {
-            var vehiclesParked = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true);
+            //var vehiclesParked = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true);
 
             var vehicles = string.IsNullOrWhiteSpace(vehiclesOverviewViewModel.LicenseNr) ?
                                                _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true) :
                                                _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true).Where(v => v.LicenseNr.StartsWith(vehiclesOverviewViewModel.LicenseNr));
 
-            vehicles = vehiclesOverviewViewModel.VehicleType is null ? vehicles : vehicles.Where(v => v.VehicleType == vehiclesOverviewViewModel.VehicleType);
+            vehicles = vehiclesOverviewViewModel.VehicleTypeId is null ? vehicles : vehicles.Where(v => v.VehicleType.VehicleTypeId == vehiclesOverviewViewModel.VehicleTypeId);
 
             var result = await vehicles.Select(p => new ParkedVehiclesViewModel
             {
+                FirstName = p.Person.FirstName,
+                LastName = p.Person.LastName,
                 VehicleId = p.VehicleId,
                 VehicleType = p.VehicleType.Type,
                 LicenseNr = p.LicenseNr,
