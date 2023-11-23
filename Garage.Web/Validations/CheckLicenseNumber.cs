@@ -4,20 +4,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Garage.Web.Validations
 {
-    public class ParkVehicleId : ValidationAttribute
+    public class CheckLicenseNumber : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             var validation = validationContext.GetRequiredService<IValidationService>();
 
-            const string errorMessage = "No parking space";
+            const string errorMessage = "License number already exists";
 
-            if (value is int input)
+            if (value is string input)
             {
-                if (validationContext.ObjectInstance is ParkVehicleViewModel model)
+                if (validationContext.ObjectInstance is CreateVehicleViewModel model)
                 {
-                    input = validation.GetSizeFromId(input);
-                    return validation.ParkingSpaceExists(input) ? ValidationResult.Success : new ValidationResult(errorMessage);
+                    return validation.LicenseNrExists(input) ? new ValidationResult(errorMessage) : ValidationResult.Success;
                 }
 
             }

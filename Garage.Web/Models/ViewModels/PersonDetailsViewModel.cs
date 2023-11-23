@@ -1,4 +1,5 @@
 ﻿using Garage.Domain.Entities;
+using Garage.Web.Validations;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garage.Web.Models.ViewModels
@@ -13,6 +14,5 @@ namespace Garage.Web.Models.ViewModels
         public string FirstName { get; set; } = string.Empty;
         [Display(Name = "Last name")]
         public string LastName { get; set; } = string.Empty;
-
     }
 }
