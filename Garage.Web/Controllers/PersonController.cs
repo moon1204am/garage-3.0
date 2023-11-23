@@ -99,10 +99,10 @@ namespace Garage.Web.Controllers
                     return View(personViewModel);
                 }
 
-                if (!IsValidDate(personViewModel.SSN))
+                if (!(personViewModel.SSN.Length == 12))
                 {
                     ModelState.AddModelError(nameof(personViewModel.SSN),
-                                            "Please enter a valid SSN");
+                                            "Please enter a valid 12 digits SSN");
                     return View(personViewModel);
 
                 }
@@ -243,24 +243,33 @@ namespace Garage.Web.Controllers
             return true;
         }
 
-        private bool IsValidDate(string ssn)
+        private bool ValidSSM(string ssn)
         {
-            var sss = ssn.Substring(0, 8);
-            if (!DateTime.TryParse(ssn.Substring(0, 8), out var birthday) ) 
-            {
-                return false;
-            }
-            //DateTime birthday = DateTime.TryParse(ssn.Substring(0,8), out var result)? result : DateTime.Now;
-            int year = birthday.Year;
-            int month = birthday.Month;
-            int day = birthday.Day;
-
-            if (month >= 1 && month <= 12 && day >= 1 && day <= DateTime.DaysInMonth(year, month))
-            {
-                return true;
-            }
-            return false;
+            try { return ssn.Length == 12; }
+            catch { return false; }
+            
         }
+
+        
+        //Doesn't work
+        //private bool IsValidDate(string ssn)
+        //{
+        //    var sss = ssn.Substring(0, 8);
+        //    if (!DateTime.TryParse(ssn.Substring(0, 8), out var birthday) ) 
+        //    {
+        //        return false;
+        //    }
+        //    //DateTime birthday = DateTime.TryParse(ssn.Substring(0,8), out var result)? result : DateTime.Now;
+        //    int year = birthday.Year;
+        //    int month = birthday.Month;
+        //    int day = birthday.Day;
+
+        //    if (month >= 1 && month <= 12 && day >= 1 && day <= DateTime.DaysInMonth(year, month))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
         private bool PersonExists(int id)
         {
             return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
