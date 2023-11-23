@@ -244,5 +244,34 @@ namespace Garage.Web.Controllers
         {
             return (_context.Vehicle?.Any(e => e.VehicleId == id)).GetValueOrDefault();
         }
+
+        public IActionResult CreateVehicleType()
+        {
+            return View();
+        }
+
+        // POST: VehicleTypes/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateVehicleType([Bind("VehicleTypeId,Type,Size")] VehicleType vehicleType)
+        {
+            
+            if (_context.VehicleType.Any(p => p.Type == vehicleType.Type))
+            {
+                ModelState.AddModelError(nameof(vehicleType.Type),
+                                         "The Type already exists.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(vehicleType);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(vehicleType);
+        }
     }
 }
