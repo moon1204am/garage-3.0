@@ -18,8 +18,7 @@ namespace Garage.Web.Controllers
     public class GarageController : Controller
     {
         private readonly Garage2_0Context _context;
-        const int minutPris = 2;
-
+        
         public GarageController (Garage2_0Context context)
         {
             _context = context;
