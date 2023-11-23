@@ -1,0 +1,23 @@
+﻿@model VehiclesOverviewViewModel
+
+@{
+    ViewData["Title"] = "Park Existing";
+}
+
+<h1>Park</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Park" method="get">
+            Park Existing Vehicle
+            <div class="form-group">
+                <label asp-for="SSN" class="control-label"></label>
+                <input asp-for="SSN" class="form-control"></input>
+                <span asp-validation-for="SSN" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Enter" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>

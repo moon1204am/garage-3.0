@@ -1,28 +1,19 @@
-﻿@model IEnumerable<Vehicle>
+﻿@model IEnumerable<ParkedVehiclesViewModel>
 
 <table class="table">
     <thead>
         <tr>
             <th>
+                <p>Name</p>
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.LicenseNr)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Color)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Wheels)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Person)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.VehicleType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ParkingTime)
             </th>
             <th></th>
         </tr>
@@ -32,26 +23,17 @@
         {
             <tr>
                 <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.LicenseNr)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Color)
+                    @Html.DisplayFor(modelItem => item.VehicleType)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Brand)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Model)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Wheels)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Person.FirstName)
-                    @Html.DisplayFor(modelItem => item.Person.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.VehicleType.Type)
+                    @Html.DisplayFor(modelItem => item.ParkingTime)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.VehicleId">Edit</a> |
