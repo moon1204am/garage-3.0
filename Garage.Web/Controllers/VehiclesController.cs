@@ -26,9 +26,11 @@ namespace Garage.Web.Controllers
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
+            var vehicles = await GetAllParkedVehicles();
             var model = new VehiclesOverviewViewModel
             {
-                ParkedVehiclesViewModel = await GetAllParkedVehicles()
+                ParkedVehiclesViewModel = vehicles,
+                FreeSpots = GarageSettings.capacity - vehicles.Count()
             };
             return View(model);
         }

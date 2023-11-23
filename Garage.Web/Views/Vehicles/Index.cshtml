@@ -13,6 +13,9 @@
     <a asp-action="CreateVehicleType">Add New VehicleType</a>
 </p>
 
+<p>Nr of free spots</p>
+<p>@Model.FreeSpots</p>
+
 <form asp-action="Filter" asp-controller="Vehicles" method="get">
     <div class="input-group mb-3">
         <input type="text" class="form-control" asp-for="LicenseNr" placeholder="Search on license number" />
