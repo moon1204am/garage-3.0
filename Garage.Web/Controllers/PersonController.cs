@@ -88,33 +88,38 @@ namespace Garage.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PersonViewModel personViewModel)
         {
-            if (_context.Person.Any(p => p.SSN == personViewModel.SSN))
-            {
-                ModelState.AddModelError(nameof(personViewModel.SSN),
-                                         "The number is already in used.");
-            }
-
-            //if (!IsValidDate(personViewModel.SSN))
-            //{
-            //    ModelState.AddModelError(nameof(personViewModel.SSN),
-            //                            "Please enter a valid SSN");
-
-            //}
-
-            if (Under18Check(personViewModel.SSN))
-            {
-                ModelState.AddModelError(nameof(personViewModel.SSN),
-                                         "You must be over 18 years old.");
-            }
-
-            if (personViewModel.FirstName == personViewModel.LastName)
-            {
-                ModelState.AddModelError(nameof(personViewModel.FirstName),
-                                         "First name can be the same as last name.");
-            }
 
             if (ModelState.IsValid)
             {
+                if (_context.Person.Any(p => p.SSN == personViewModel.SSN))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                             "The number is already in used.");
+                    return View(personViewModel);
+                }
+
+                if (!IsValidDate(personViewModel.SSN))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                            "Please enter a valid SSN");
+                    return View(personViewModel);
+
+                }
+
+                if (Under18Check(personViewModel.SSN))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                             "You must be over 18 years old.");
+                    return View(personViewModel);
+                }
+
+                if (personViewModel.FirstName == personViewModel.LastName)
+                {
+                    ModelState.AddModelError(nameof(personViewModel.FirstName),
+                                             "First name can be the same as last name.");
+                    return View(personViewModel);
+                }
+
                 var person = new Person
                 {
                     SSN = personViewModel.SSN,
@@ -240,7 +245,12 @@ namespace Garage.Web.Controllers
 
         private bool IsValidDate(string ssn)
         {
-            DateTime birthday = DateTime.Parse(ssn.Substring(0,8));
+            var sss = ssn.Substring(0, 8);
+            if (!DateTime.TryParse(ssn.Substring(0, 8), out var birthday) ) 
+            {
+                return false;
+            }
+            //DateTime birthday = DateTime.TryParse(ssn.Substring(0,8), out var result)? result : DateTime.Now;
             int year = birthday.Year;
             int month = birthday.Month;
             int day = birthday.Day;
