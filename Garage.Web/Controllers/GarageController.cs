@@ -75,6 +75,7 @@ namespace Garage.Web.Controllers
         public async Task<IActionResult> AvailableParkingSpots()
         {
             var availableParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId == null).ToListAsync();
+            
             var availableParkingSpotsViewModel = new AvailableSpotsViewModel();
            
             foreach (var item in availableParkingSpots)

@@ -4,21 +4,21 @@ namespace Garage.Web.Models.ViewModels
 {
     public class StatistikViewModel
     {
-        [Display(Name = "Intäkter")]
+        [Display(Name = "Revenue:")]
         public double Intakter { get; set; }
-        [Display(Name = "Parkerat tid i snitt")]
+        [Display(Name = "Average Parkingtime:")]
         public int GenomsnittligParkeradTid { get; set; }
-        [Display(Name = "Antal hjul i garaget")]
+        [Display(Name = "No of Wheels in Garage:")]
         public int? AntalHjulIGaraget { get; set; }
-        [Display(Name = "Antal flygplan")]
+        [Display(Name = "Number of Airplanes:")]
         public int AntalFlygplan { get; set; }
-        [Display(Name = "Antal motorcyklar")]
+        [Display(Name = "Number of Motorcycles:")]
         public int AntalMotorcyklar { get; set; }
-        [Display(Name = "Antal bussar")]
+        [Display(Name = "Number of Buses:")]
         public int AntalBussar { get; set; }
-        [Display(Name = "Antal bilar")]
+        [Display(Name = "Number of Cars:")]
         public int AntalBilar { get; set; }
-        [Display(Name = "Antal båtar")]
+        [Display(Name = "Number of Boats:")]
         public int AntalBatar { get; set; }
     }
 }

@@ -5,16 +5,16 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Parked Vehicles</h1>
 
 <p>
-    <a asp-action="Create">Add New Vehicle To Your Account</a> |
-    <a asp-action="ParkExisting">Park Existing Vehicle</a> |
-    <a asp-action="CreateVehicleType">Add New VehicleType</a>
+    <a asp-action="Create" class="btn btnAhlens mb-1">Add Vehicle to account</a> |
+    <a asp-action="ParkExisting" class="btn btnAhlens mb-1" >Park Existing Vehicle</a> |
+    <a asp-action="CreateVehicleType" class="btn btnAhlens mb-1" >Add VehicleType</a>
 </p>
 
-<p>Nr of free spots</p>
-<p>@Model.FreeSpots</p>
+<p>Nr of free spots: @Model.FreeSpots </p>
+
 
 <form asp-action="Filter" asp-controller="Vehicles" method="get">
     <div class="input-group mb-3">
