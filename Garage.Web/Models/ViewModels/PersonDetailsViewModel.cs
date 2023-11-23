@@ -9,9 +9,9 @@ namespace Garage.Web.Models.ViewModels
         public int PersonId { get; set; }
         [Display(Name = "SSN")]
         public string SSN { get; set; } = string.Empty;
-        [Display(Name = "Firstname")]
+        [Display(Name = "First name")]
         public string FirstName { get; set; } = string.Empty;
-        [Display(Name = "Lastname")]
+        [Display(Name = "Last name")]
         public string LastName { get; set; } = string.Empty;
 
     }

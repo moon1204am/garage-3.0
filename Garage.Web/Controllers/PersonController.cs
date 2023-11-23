@@ -95,6 +95,13 @@ namespace Garage.Web.Controllers
                                          "The number is already in used.");
             }
 
+            //if (!IsValidDate(personViewModel.SSN))
+            //{
+            //    ModelState.AddModelError(nameof(personViewModel.SSN),
+            //                            "Please enter a valid SSN");
+
+            //}
+
             if (Under18Check(personViewModel.SSN))
             {
                 ModelState.AddModelError(nameof(personViewModel.SSN),
@@ -232,7 +239,19 @@ namespace Garage.Web.Controllers
             return true;
         }
 
+        private bool IsValidDate(string ssn)
+        {
+            DateTime birthday = DateTime.Parse(ssn.Substring(0,8));
+            int year = birthday.Year;
+            int month = birthday.Month;
+            int day = birthday.Day;
 
+            if (month >= 1 && month <= 12 && day >= 1 && day <= DateTime.DaysInMonth(year, month))
+            {
+                return true;
+            }
+            return false;
+        }
         private bool PersonExists(int id)
         {
             return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();
