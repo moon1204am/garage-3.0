@@ -89,6 +89,7 @@ namespace Garage.Web.Controllers
         public async Task<IActionResult> Create(PersonViewModel personViewModel)
         {
 
+
             if (ModelState.IsValid)
             {
                 if (_context.Person.Any(p => p.SSN == personViewModel.SSN))
@@ -119,7 +120,6 @@ namespace Garage.Web.Controllers
                                              "First name can be the same as last name.");
                     return View(personViewModel);
                 }
-
                 var person = new Person
                 {
                     SSN = personViewModel.SSN,
