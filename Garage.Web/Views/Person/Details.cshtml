@@ -77,13 +77,18 @@
                 <td>
                     @if(item.IsParked == true)
                     {
-                        <a asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId">Checkout Vehicle</a>
+                      //  <a asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId">Checkout Vehicle</a>
+                        <form asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId" method="post">
+                            <div class="form-group">
+                                <input type="submit" value="Checkout Vehicle" class="btn btnAhlens" />
+                            </div>
+                        </form>
                     }
                     else
                     {
                         <form asp-controller="Vehicles" asp-action="ParkMember" asp-route-id="@item.VehicleId" method="post">
                             <div class="form-group">
-                                <input type="submit" value="Park Vehicle" class="btn btn-primary" />
+                                <input type="submit" value="    Park Vehicle     " class="btn btn-primary" />
                             </div>
                         </form>
                     }

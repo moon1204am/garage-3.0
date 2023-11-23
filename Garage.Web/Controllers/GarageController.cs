@@ -29,21 +29,25 @@ namespace Garage.Web.Controllers
         {
             var fordon = await _context.Vehicle.Include(v => v.VehicleType).ToListAsync();
             var parkeradeFordon = fordon.Where(p => p.IsParked);
-            var parkingSpots = await _context.ParkingSpot.ToListAsync();
+            var occupiedParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId != null).ToListAsync();
+            var availableParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId == null).ToListAsync();
             var statistikModell = new StatistikViewModel();
             double totalaAntaletMinuter = 0;
             int antalParkeradeFordon = parkeradeFordon.Count();
             var summaHjul = parkeradeFordon.Sum(v => v.Wheels);
+            string spots = null;
+            
 
 
-            foreach (var item in parkingSpots)
-                if (item.VehicleId != null)
-                {
-
+                    foreach (var item in occupiedParkingSpots)      
                     {
-                        totalaAntaletMinuter += RaknaUtTid(item.Arrival, DateTime.Now).TotalMinutes;
+                        totalaAntaletMinuter += RaknaUtTid(item.Arrival, DateTime.Now).TotalMinutes;                       
                     }
-                }
+                     foreach (var item in availableParkingSpots)
+                     {
+                         spots += " " + item.ParkingSpotId;
+                     }
+
 
             AntalFordonPerSort(statistikModell, parkeradeFordon);
             statistikModell.AntalHjulIGaraget = summaHjul;
@@ -67,5 +71,21 @@ namespace Garage.Web.Controllers
         {
             return utckeck.Subtract(ankomst);
         }
-    }
+
+        public async Task<IActionResult> AvailableParkingSpots()
+        {
+            var availableParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId == null).ToListAsync();
+            var availableParkingSpotsViewModel = new AvailableSpotsViewModel();
+           
+            foreach (var item in availableParkingSpots)
+            {
+                availableParkingSpotsViewModel.AvailableParkingSpots += " " + item.ParkingSpotId;
+            }
+
+            return View(availableParkingSpotsViewModel);
+
+        }
+
+
+        }
 }
