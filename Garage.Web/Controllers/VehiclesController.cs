@@ -211,6 +211,8 @@ namespace Garage.Web.Controllers
             ReceiptViewModel receipt = null;
             if (vehicleToCheckout != null && vehicleToCheckout.ParkingSpots != null)
             {
+                receipt = Receipt(vehicleToCheckout);
+
                 foreach(var spot in vehicleToCheckout.ParkingSpots.ToList())
                 {
                     vehicleToCheckout.ParkingSpots.Remove(spot);
@@ -219,7 +221,6 @@ namespace Garage.Web.Controllers
                 
                 await _context.SaveChangesAsync();
 
-                receipt = Receipt(vehicleToCheckout);
             }
 
             return View(nameof(Receipt), receipt);

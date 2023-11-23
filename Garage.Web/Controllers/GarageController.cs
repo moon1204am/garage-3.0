@@ -47,7 +47,7 @@ namespace Garage.Web.Controllers
 
             AntalFordonPerSort(statistikModell, parkeradeFordon);
             statistikModell.AntalHjulIGaraget = summaHjul;
-            statistikModell.Intakter = totalaAntaletMinuter * GarageSettings.minutePrice;
+            statistikModell.Intakter = totalaAntaletMinuter * GarageSettings.pricePerMinute;
             statistikModell.GenomsnittligParkeradTid = (int)(totalaAntaletMinuter / antalParkeradeFordon);
             return View(statistikModell);
         }
