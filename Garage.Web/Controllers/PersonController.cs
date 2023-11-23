@@ -27,7 +27,7 @@ namespace Garage.Web.Controllers
                 FirstName = v.FirstName,
                 LastName = v.LastName,
                 SSN = v.SSN,
-                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Where(v=>v.IsParked).Count(),
             }).OrderByDescending(p => p.FirstName.Substring(0, 2))
              .ToListAsync();
 
