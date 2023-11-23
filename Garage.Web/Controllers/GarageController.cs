@@ -27,13 +27,13 @@ namespace Garage.Web.Controllers
         }
         public async Task<IActionResult> Statistik()
         {
-            var fordon = await _context.Vehicle.Include(v => v.VehicleType).ToListAsync();
-            var parkeradeFordon = fordon.Where(p => p.IsParked);
+            var vehicles = await _context.Vehicle.Include(v => v.VehicleType).ToListAsync();
+            var parkedVehicles = vehicles.Where(p => p.IsParked);
             var parkingSpots = await _context.ParkingSpot.ToListAsync();
             var statistikModell = new StatistikViewModel();
-            double totalaAntaletMinuter = 0;
-            int antalParkeradeFordon = parkeradeFordon.Count();
-            var summaHjul = parkeradeFordon.Sum(v => v.Wheels);
+            double totalNoOfMins = 0;
+            int noOfParkedVehicles = parkedVehicles.Count();
+            var totalWheels = parkedVehicles.Sum(v => v.Wheels);
 
 
             foreach (var item in parkingSpots)
@@ -41,14 +41,14 @@ namespace Garage.Web.Controllers
                 {
 
                     {
-                        totalaAntaletMinuter += RaknaUtTid(item.Arrival, DateTime.Now).TotalMinutes;
+                        totalNoOfMins += CalculateTime(item.Arrival, DateTime.Now).TotalMinutes;
                     }
                 }
 
-            AntalFordonPerSort(statistikModell, parkeradeFordon);
-            statistikModell.AntalHjulIGaraget = summaHjul;
-            statistikModell.Intakter = totalaAntaletMinuter * GarageSettings.minutePrice;
-            statistikModell.GenomsnittligParkeradTid = (int)(totalaAntaletMinuter / antalParkeradeFordon);
+            AntalFordonPerSort(statistikModell, parkedVehicles);
+            statistikModell.AntalHjulIGaraget = totalWheels;
+            statistikModell.Intakter = totalNoOfMins * GarageSettings.minutePrice;
+            statistikModell.GenomsnittligParkeradTid = (int)(totalNoOfMins / noOfParkedVehicles);
             return View(statistikModell);
         }
 
@@ -63,9 +63,9 @@ namespace Garage.Web.Controllers
             return (statistikModell);
         }
 
-        private TimeSpan RaknaUtTid(DateTime ankomst, DateTime utckeck)
+        private TimeSpan CalculateTime(DateTime arrival, DateTime checkout)
         {
-            return utckeck.Subtract(ankomst);
+            return checkout.Subtract(arrival);
         }
     }
 }
