@@ -10,6 +10,7 @@ using Garage.Data.Data;
 using AutoMapper;
 using Garage.Web.Models.ViewModels;
 using Garage.Web.Services;
+using Garage.Data;
 
 namespace Garage.Web.Controllers
 {
@@ -243,6 +244,32 @@ namespace Garage.Web.Controllers
         private bool VehicleExists(int id)
         {
             return (_context.Vehicle?.Any(e => e.VehicleId == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> Filter(VehiclesOverviewViewModel vehiclesOverviewViewModel)
+        {
+            var vehiclesParked = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true);
+
+            var vehicles = string.IsNullOrWhiteSpace(vehiclesOverviewViewModel.LicenseNr) ?
+                                               _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true) :
+                                               _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true).Where(v => v.LicenseNr.StartsWith(vehiclesOverviewViewModel.LicenseNr));
+
+            vehicles = vehiclesOverviewViewModel.VehicleType is null ? vehicles : vehicles.Where(v => v.VehicleType == vehiclesOverviewViewModel.VehicleType);
+
+            var result = await vehicles.Select(p => new ParkedVehiclesViewModel
+            {
+                VehicleId = p.VehicleId,
+                VehicleType = p.VehicleType.Type,
+                LicenseNr = p.LicenseNr,
+                ParkingTime = DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()
+            }).ToListAsync();
+
+            var vehicleModel = new VehiclesOverviewViewModel
+            {
+                ParkedVehiclesViewModel = result,
+                FreeSpots = GarageSettings.capacity - vehicles.Count(),
+            };
+            return View(nameof(Index), vehicleModel);
         }
     }
 }

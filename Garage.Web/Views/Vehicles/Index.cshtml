@@ -1,4 +1,5 @@
 ﻿@model VehiclesOverviewViewModel
+@inject IVehicleTypeSelectListService service
 
 @{
     ViewData["Title"] = "Index";
@@ -24,6 +25,20 @@
         </form>
     </div>
 </div>
+
+<form asp-action="Filter" asp-controller="Vehicles" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" asp-for="LicenseNr" placeholder="Search on license number" />
+        <div class="input-group-append">
+            <select class="form-control" asp-for="VehicleType" asp-items="@service.GetVehicleTypes()">
+                <option selected="selected" value="">Choose vehicle</option>
+            </select>
+        </div>
+        <div class="input-group-append">
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Search</i></button>
+        </div>
+    </div>
+</form>
 
 <partial name="_VehiclesPartial" model="@Model.Vehicles" />
 
