@@ -1,0 +1,64 @@
+﻿@model ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+}
+
+<h1 class="display-6">Receipt</h1>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LicenseNr)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LicenseNr)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Arrival)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Arrival)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CheckOut)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CheckOut)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ParkingTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ParkingTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class="col-sm-10">
+            <p>@Model.Price.ToString("c")</p>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.TotalCost.ToString("c")
+        </dd>
+    </dl>
+    <div class="row">
+        <div class="d-inline-block p-2">
+            <form asp-action="Receipt" asp-controller="Receipt">
+                <a class="btn btn-success" onclick="window.print()">Print receipt</a>
+            </form>
+        </div>
+        <div class="d-inline-block p-2">
+            <a asp-action="Index" asp-controller="Vehicles">Back to list</a>
+        </div>
+    </div>
+</div>

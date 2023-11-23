@@ -8,6 +8,8 @@ namespace Garage.Web.Models.ViewModels
 
         [Display(Name = "License number")]
         public string LicenseNr { get; set; }
+        
+        public  string Name { get; set; }
 
         public DateTime Arrival { get; set; }
 

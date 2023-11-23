@@ -21,14 +21,16 @@ namespace Garage.Web.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Receipt(int id)
+        public async Task<IActionResult> Receipt(int? vehicleid)
         {
-            if (id == null) { return NotFound(); }
-            var parkingSpot = await _context.ParkingSpot
-               .FirstOrDefaultAsync(p => p.ParkingSpotId == id);
-            _context.ParkingSpot.Remove(parkingSpot);
+            if (vehicleid == null) { return NotFound(); }
+            var parkingVehicle = await _context.Vehicle.Include(v => v.ParkingSpots)
+                                .FirstOrDefaultAsync(v => v.VehicleId == vehicleid);
+            var parkingSpot = parkingVehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == vehicleid);
+            
+            _context.Vehicle.Remove(parkingVehicle);
             await _context.SaveChangesAsync();
-            TempData["OkFeedbackMsg"] = $"{parkingSpot.Vehicle.LicenseNr} has checked out.";
+            TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
 
             DateTime checkOut = DateTime.Now;
             TimeSpan time = GetTime(parkingSpot.Arrival, checkOut);
@@ -37,7 +39,9 @@ namespace Garage.Web.Controllers
 
             var model = new ReceiptViewModel
             {
-                LicenseNr = parkingSpot.Vehicle.LicenseNr,
+                Id = parkingVehicle.VehicleId,
+                LicenseNr = parkingVehicle.LicenseNr,
+                Name = $"{parkingVehicle.Person.FirstName} {parkingVehicle.Person.LastName}",
                 Arrival = parkingSpot.Arrival,
                 CheckOut = checkOut,
                 ParkingTime = parkingTime,
@@ -45,6 +49,16 @@ namespace Garage.Web.Controllers
                 TotalCost = totalCost
             };
             return View(model);
+        }
+
+        private TimeSpan GetTime(DateTime arrival, DateTime checkOut)
+        {
+            return checkOut.Subtract(arrival);
+        }
+
+        private int GetTotalCost(int price, TimeSpan parkingTime)
+        {
+            return (int)parkingTime.TotalMinutes * (price / 60);
         }
 
 
@@ -189,15 +203,7 @@ namespace Garage.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private TimeSpan GetTime(DateTime arrival, DateTime checkOut)
-        {
-            return checkOut.Subtract(arrival);
-        }
-
-        private int GetTotalCost(int price, TimeSpan parkingTime)
-        {
-            return (int)parkingTime.TotalMinutes * (price/60);
-        }
+       
 
         private bool ParkingSpotExists(int id)
         {
