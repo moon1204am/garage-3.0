@@ -61,7 +61,7 @@ namespace Garage.Web.Services
                     FoundParkingSpot = consecutives;
                     return true;
                 }
-                n = 1;
+                n++;
             }
             return false;
             //var currentParkingSpot = parkingSpots.Select(p => p.VehicleId)
