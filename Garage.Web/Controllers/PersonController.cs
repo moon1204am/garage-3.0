@@ -72,7 +72,6 @@ namespace Garage.Web.Controllers
                 PersonId = person.PersonId,
                 Vehicles = await _context.Vehicle.Where(p => p.PersonId == person.PersonId).Include(v => v.VehicleType).ToListAsync()
             };
-
             return View(personDetailsViewModel);
         }
 

@@ -75,10 +75,22 @@
                 </td>
 
                 <td>
-                    <a asp-controller="Vehicles" asp-action="Delete" asp-route-id="@item.VehicleId">Delete Vehicle</a>
-
+                    @if(item.IsParked == true)
+                    {
+                        <a asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId">Checkout Vehicle</a>
+                    }
+                    else
+                    {
+                        <form asp-controller="Vehicles" asp-action="ParkMember" asp-route-id="@item.VehicleId" method="post">
+                            <div class="form-group">
+                                <input type="submit" value="Park Vehicle" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+

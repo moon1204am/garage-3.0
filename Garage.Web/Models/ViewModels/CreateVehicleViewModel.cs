@@ -7,12 +7,12 @@ namespace Garage.Web.Models.ViewModels
     public class CreateVehicleViewModel
     {
         public int VehicleId { get; set; }
+        [Required]
+        [Display(Name = "Vehicle type")]
         public int VehicleTypeId { get; set; }
-        //[Required]
-        //[Display(Name = "Vehicle type")]
-        //public VehicleType VehicleType { get; set; } = new VehicleType();
         [Required]
         [RegularExpression(@"[A-Za-z]{3}[0-9]{2}[A-Za-z0-9]{1}", ErrorMessage = "Please provide a valid license number.")]
+        [CheckLicenseNumber]
         [Display(Name = "License number")]
         public string LicenseNr { get; set; } = string.Empty;
         [Required]
@@ -29,9 +29,6 @@ namespace Garage.Web.Models.ViewModels
         [Required]
         [Range(0, 12)]
         public int? Wheels { get; set; }
-        //[Required]
-        //public IEnumerable<SelectListItem> VehicleTypes { get; set; } = new List<SelectListItem>();
-
         public IEnumerable<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         [Required]
         [CheckSSN]

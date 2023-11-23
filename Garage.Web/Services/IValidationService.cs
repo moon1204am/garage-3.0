@@ -12,5 +12,6 @@ namespace Garage.Web.Services
         bool SSNExists(string SSN);
 
         bool ParkingSpaceExists(int size);
+        bool LicenseNrExists(string licenseNr);
     }
 }
