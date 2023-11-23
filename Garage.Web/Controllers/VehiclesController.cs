@@ -27,11 +27,10 @@ namespace Garage.Web.Controllers
         // GET: Vehicles
         public async Task<IActionResult> Index()
         {
-            var vehicles = await GetAllParkedVehicles();
             var model = new VehiclesOverviewViewModel
             {
-                ParkedVehiclesViewModel = vehicles,
-                FreeSpots = GarageSettings.capacity - vehicles.Count()
+                ParkedVehiclesViewModel = await GetAllParkedVehicles(),
+                FreeSpots = _context.ParkingSpot.Where(p => p.VehicleId == null).Count(),
             };
             return View(model);
         }
@@ -105,6 +104,7 @@ namespace Garage.Web.Controllers
         private async Task<IEnumerable<ParkedVehiclesViewModel>> GetAllParkedVehicles()
         {
             var parkedVehicles = _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).Include(v => v.ParkingSpots).Where(v => v.IsParked == true);
+            
 
             return await parkedVehicles.Select(p => new ParkedVehiclesViewModel
                                             {
@@ -113,9 +113,10 @@ namespace Garage.Web.Controllers
                                                 LastName =p.Person.LastName,
                                                 VehicleType = p.VehicleType.Type,
                                                 LicenseNr = p.LicenseNr,
-                                                ParkingTime = DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()
+                                                //ParkingTime = (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault())
+                                                ParkingTime = string.Format("{0:00}:{1:00}", (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Hours, (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Minutes)
 
-                                            }).ToListAsync();
+            }).ToListAsync();
         }
 
 
@@ -347,13 +348,13 @@ namespace Garage.Web.Controllers
                 VehicleId = p.VehicleId,
                 VehicleType = p.VehicleType.Type,
                 LicenseNr = p.LicenseNr,
-                ParkingTime = DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()
+                ParkingTime = string.Format("{0:00}:{1:00}", (DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Hours, (DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Minutes)
             }).ToListAsync();
 
             var vehicleModel = new VehiclesOverviewViewModel
             {
                 ParkedVehiclesViewModel = result,
-                FreeSpots = GarageSettings.capacity - vehicles.Count(),
+                FreeSpots = _context.ParkingSpot.Where(p => p.VehicleId == null).Count(),
             };
             return View(nameof(Index), vehicleModel);
         }

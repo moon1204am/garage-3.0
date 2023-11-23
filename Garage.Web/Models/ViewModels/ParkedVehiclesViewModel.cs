@@ -9,6 +9,6 @@ namespace Garage.Web.Models.ViewModels
         public string LastName { get; set; }
         public string VehicleType { get; set; }
         public string LicenseNr { get; set; }
-        public TimeSpan ParkingTime { get; set; }
+        public string ParkingTime { get; set; }
     }
 }
