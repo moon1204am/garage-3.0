@@ -4,7 +4,8 @@ namespace Garage.Web.Models.ViewModels
 {
     public class ReceiptViewModel
     {
-        public int Id { get; set; }
+        public int VehicleId { get; set; }
+        public int ParkingSpotID { get; set; }
 
         [Display(Name = "License number")]
         public string LicenseNr { get; set; }
@@ -24,5 +25,7 @@ namespace Garage.Web.Models.ViewModels
 
         [Display(Name = "Total cost")]
         public int TotalCost { get; set; }
+
+       
     }
 }

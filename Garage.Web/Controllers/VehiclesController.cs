@@ -15,6 +15,7 @@ namespace Garage.Web.Controllers
         private readonly Garage2_0Context _context;
         private readonly IMapper mapper;
         private readonly IValidationService validation;
+        
 
         public VehiclesController(Garage2_0Context context, IMapper mapper, IValidationService validation)
         {
@@ -207,6 +208,7 @@ namespace Garage.Web.Controllers
         {
             var vehicleToCheckout = _context.Vehicle.Include(v => v.ParkingSpots).FirstOrDefault(v => v.VehicleId == id);
 
+            ReceiptViewModel receipt = null;
             if (vehicleToCheckout != null && vehicleToCheckout.ParkingSpots != null)
             {
                 foreach(var spot in vehicleToCheckout.ParkingSpots.ToList())
@@ -216,8 +218,11 @@ namespace Garage.Web.Controllers
                 vehicleToCheckout.IsParked = false;
                 
                 await _context.SaveChangesAsync();
+
+                receipt = Receipt(vehicleToCheckout);
             }
-            return RedirectToAction(nameof(Index), nameof(Person));
+
+            return View(nameof(Receipt), receipt);
         }
 
         public IActionResult ParkExisting()
@@ -379,6 +384,45 @@ namespace Garage.Web.Controllers
             }
 
             return View(vehicleType);
+        }
+
+        public ReceiptViewModel Receipt(Vehicle vehicle)
+        {
+            //var parkingVehicle = await _context.Vehicle.Include(v => v.ParkingSpots)
+            //                    .FirstOrDefaultAsync(v => v.VehicleId == id);
+            var parkingSpot = vehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == vehicle.VehicleId);
+
+            //_context.Vehicle.Remove(parkingVehicle);
+            //await _context.SaveChangesAsync();
+            //TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
+
+            DateTime checkOut = DateTime.Now;
+            TimeSpan time = GetTime(parkingSpot.Arrival, checkOut);
+            string parkingTime = $"{time.Hours} hours {time.Minutes} minutes";
+            int totalCost = GetTotalCost(GarageSettings.pricePerHour, time);
+
+            var model = new ReceiptViewModel
+            {
+                ParkingSpotID = parkingSpot.ParkingSpotId,
+                LicenseNr = vehicle.LicenseNr,
+                Name = $"{vehicle.Person.FirstName} {vehicle.Person.LastName}",
+                Arrival = parkingSpot.Arrival,
+                CheckOut = checkOut,
+                ParkingTime = parkingTime,
+                Price = GarageSettings.pricePerHour,
+                TotalCost = totalCost
+            };
+            return model;
+        }
+
+        private TimeSpan GetTime(DateTime arrival, DateTime checkOut)
+        {
+            return checkOut.Subtract(arrival);
+        }
+
+        private int GetTotalCost(int price, TimeSpan parkingTime)
+        {
+            return (int)parkingTime.TotalMinutes * (price / 60);
         }
     }
 }

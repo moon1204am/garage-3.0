@@ -21,16 +21,16 @@ namespace Garage.Web.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Receipt(int? vehicleid)
+        public async Task<IActionResult> Receipt(int? id)
         {
-            if (vehicleid == null) { return NotFound(); }
+            if (id == null) { return NotFound(); }
             var parkingVehicle = await _context.Vehicle.Include(v => v.ParkingSpots)
-                                .FirstOrDefaultAsync(v => v.VehicleId == vehicleid);
-            var parkingSpot = parkingVehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == vehicleid);
+                                .FirstOrDefaultAsync(v => v.VehicleId == id);
+            var parkingSpot = parkingVehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == id);
             
-            _context.Vehicle.Remove(parkingVehicle);
-            await _context.SaveChangesAsync();
-            TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
+            //_context.Vehicle.Remove(parkingVehicle);
+            //await _context.SaveChangesAsync();
+            //TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
 
             DateTime checkOut = DateTime.Now;
             TimeSpan time = GetTime(parkingSpot.Arrival, checkOut);
@@ -39,7 +39,7 @@ namespace Garage.Web.Controllers
 
             var model = new ReceiptViewModel
             {
-                Id = parkingVehicle.VehicleId,
+                ParkingSpotID = parkingSpot.ParkingSpotId,
                 LicenseNr = parkingVehicle.LicenseNr,
                 Name = $"{parkingVehicle.Person.FirstName} {parkingVehicle.Person.LastName}",
                 Arrival = parkingSpot.Arrival,
