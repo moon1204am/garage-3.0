@@ -77,7 +77,6 @@
                 <td>
                     @if(item.IsParked == true)
                     {
-                      //  <a asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId">Checkout Vehicle</a>
                         <form asp-controller="Vehicles" asp-action="Checkout" asp-route-id="@item.VehicleId" method="post">
                             <div class="form-group">
                                 <input type="submit" value="Checkout Vehicle" class="btn btnAhlens" />

@@ -1,6 +1,5 @@
 ﻿using Garage.Data.Data;
 using Garage.Data;
-using Microsoft.EntityFrameworkCore;
 namespace Garage.Web.Extensions
 {
 
