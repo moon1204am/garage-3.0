@@ -5,7 +5,6 @@ namespace Garage.Web.Models.ViewModels
 {
     public class VehiclesOverviewViewModel
     {
-        //public IEnumerable<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         [CheckSSN]
         public string SSN { get; set; } = string.Empty;
         public string LicenseNr { get; set; } = string.Empty;
