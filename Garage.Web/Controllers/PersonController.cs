@@ -99,6 +99,14 @@ namespace Garage.Web.Controllers
                     return View(personViewModel);
                 }
 
+                if (!(SSNIsDigit(personViewModel.SSN)))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                            "Please enter a valid 12 digits SSN");
+                    return View(personViewModel);
+
+                }
+
                 if (!(personViewModel.SSN.Length == 12))
                 {
                     ModelState.AddModelError(nameof(personViewModel.SSN),
@@ -243,11 +251,11 @@ namespace Garage.Web.Controllers
             return true;
         }
 
-        private bool ValidSSM(string ssn)
+        
+        private bool SSNIsDigit(string ssn)
         {
-            try { return ssn.Length == 12; }
-            catch { return false; }
-            
+           if (ssn.Contains("[0-9]")) return true;
+           else return false;
         }
 
         
