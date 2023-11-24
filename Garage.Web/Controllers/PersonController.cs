@@ -254,8 +254,7 @@ namespace Garage.Web.Controllers
         
         private bool SSNIsDigit(string ssn)
         {
-           if (ssn.Contains("[0-9]")) return true;
-           else return false;
+            return long.TryParse(ssn, out var result);
         }
 
         
