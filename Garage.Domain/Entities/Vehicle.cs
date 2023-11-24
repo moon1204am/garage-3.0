@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 
 namespace Garage.Domain.Entities
 {
@@ -17,10 +16,8 @@ namespace Garage.Domain.Entities
         public string Model { get; set; } = string.Empty;
         [Range(0, 12)]
         public int? Wheels { get; set; }
-        //FK
         public int VehicleTypeId { get; set; }
         public int PersonId { get; set; }
-        //Nav prop
         public Person Person { get; set; } = new Person();
         public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
         [Display(Name = "Vehicle type")]

@@ -1,14 +1,4 @@
-﻿using Garage.Data.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-
-
-namespace Garage.Data.Migrations
+﻿namespace Garage.Data.Migrations
 {
     //internal class Garage2_0ContextFactory : IDesignTimeDbContextFactory<Garage2_0Context>
     //{
@@ -21,5 +11,5 @@ namespace Garage.Data.Migrations
     //    }
     //}
 
-    
+
 }

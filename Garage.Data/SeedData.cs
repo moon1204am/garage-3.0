@@ -1,19 +1,10 @@
-﻿using Bogus.DataSets;
-using Bogus;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bogus;
 using Garage.Data.Data;
 using Microsoft.EntityFrameworkCore;
 using Bogus.Extensions.Sweden;
 using Garage.Domain.Entities;
 using Person = Garage.Domain.Entities.Person;
-using System.ComponentModel.DataAnnotations;
 using Bogus.Extensions.UnitedKingdom;
-using System.Runtime.Intrinsics.X86;
 
 namespace Garage.Data
 {

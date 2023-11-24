@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Garage.Domain.Entities;
 using Garage.Data.Data;
-using AutoMapper;
 using Garage.Web.Models.ViewModels;
-using Garage.Web.Services;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Garage.Data;
 
 namespace Garage.Web.Controllers
@@ -25,13 +17,13 @@ namespace Garage.Web.Controllers
            
            
         }
-        public async Task<IActionResult> Statistik()
+        public async Task<IActionResult> Statistics()
         {
             var fordon = await _context.Vehicle.Include(v => v.VehicleType).ToListAsync();
             var parkeradeFordon = fordon.Where(p => p.IsParked);
             var occupiedParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId != null).ToListAsync();
             var availableParkingSpots = await _context.ParkingSpot.Where(s => s.VehicleId == null).ToListAsync();
-            var statistikModell = new StatistikViewModel();
+            var statistikModell = new StatisticsViewModel();
             double totalaAntaletMinuter = 0;
             int antalParkeradeFordon = parkeradeFordon.Count();
             var summaHjul = parkeradeFordon.Sum(v => v.Wheels);
@@ -56,7 +48,7 @@ namespace Garage.Web.Controllers
             return View(statistikModell);
         }
 
-        private static StatistikViewModel AntalFordonPerSort(StatistikViewModel statistikModell, IEnumerable<Vehicle> parkeradeFordon)
+        private static StatisticsViewModel AntalFordonPerSort(StatisticsViewModel statistikModell, IEnumerable<Vehicle> parkeradeFordon)
         {
 
             statistikModell.AntalBatar = parkeradeFordon.Where(p => p.VehicleType.VehicleTypeId == 2).Count();

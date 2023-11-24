@@ -1,8 +1,6 @@
 ﻿using Garage.Data;
 using Garage.Data.Data;
 using Garage.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging.Signing;
 
 namespace Garage.Web.Services
 {
@@ -64,10 +62,6 @@ namespace Garage.Web.Services
                 n++;
             }
             return false;
-            //var currentParkingSpot = parkingSpots.Select(p => p.VehicleId)
-            //                                     .Aggregate((accumulator, current) =>
-            //                                        current == null ? accumulator + 1 : 0
-            //                                     );
         }
 
         private IEnumerable<ParkingSpot> FindConsecutiveParkingSpots(IEnumerable<ParkingSpot> spots, int size)
