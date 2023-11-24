@@ -6,6 +6,7 @@ using Garage.Data.Data;
 using AutoMapper;
 using Garage.Web.Models.ViewModels;
 using Garage.Web.Services;
+using Garage.Data;
 
 namespace Garage.Web.Controllers
 {
@@ -111,7 +112,6 @@ namespace Garage.Web.Controllers
                                                 LastName =p.Person.LastName,
                                                 VehicleType = p.VehicleType.Type,
                                                 LicenseNr = p.LicenseNr,
-                                                //ParkingTime = (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault())
                                                 ParkingTime = string.Format("{0:00}:{1:00}", (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Hours, (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Minutes)
 
             }).ToListAsync();
@@ -134,11 +134,8 @@ namespace Garage.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                //get chosen vehicle to park
                 var vehicleToPark = await _context.Vehicle.Include(v => v.Person).FirstOrDefaultAsync(v => v.VehicleId == parkIndexViewModel.VehicleId);
-                // get free spots
                 var freeParkingSpot = validation.FoundParkingSpot;
-                // add spots to persons parkingspots list
                 foreach (var spot in freeParkingSpot)
                 {
                     spot.Arrival = DateTime.Now;
@@ -331,8 +328,6 @@ namespace Garage.Web.Controllers
 
         public async Task<IActionResult> Filter(VehiclesOverviewViewModel vehiclesOverviewViewModel)
         {
-            //var vehiclesParked = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true);
-
             var vehicles = string.IsNullOrWhiteSpace(vehiclesOverviewViewModel.LicenseNr) ?
                                                _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true) :
                                                _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true).Where(v => v.LicenseNr.StartsWith(vehiclesOverviewViewModel.LicenseNr));
@@ -388,13 +383,7 @@ namespace Garage.Web.Controllers
 
         public ReceiptViewModel Receipt(Vehicle vehicle)
         {
-            //var parkingVehicle = await _context.Vehicle.Include(v => v.ParkingSpots)
-            //                    .FirstOrDefaultAsync(v => v.VehicleId == id);
             var parkingSpot = vehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == vehicle.VehicleId);
-
-            //_context.Vehicle.Remove(parkingVehicle);
-            //await _context.SaveChangesAsync();
-            //TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
 
             DateTime checkOut = DateTime.Now;
             TimeSpan time = GetTime(parkingSpot.Arrival, checkOut);

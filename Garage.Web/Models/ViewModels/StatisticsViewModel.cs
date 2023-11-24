@@ -2,7 +2,7 @@
 
 namespace Garage.Web.Models.ViewModels
 {
-    public class StatistikViewModel
+    public class StatisticsViewModel
     {
         [Display(Name = "Revenue:")]
         public double Intakter { get; set; }
