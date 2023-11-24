@@ -1,11 +1,10 @@
 ﻿@model PersonIndexViewModel
 
-
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Member Index</h1>
+<h1>Member overview</h1>
 <p class="alert-info"><strong>@TempData["OkFeedbackMsg"]</strong></p>
 
 <p>
@@ -13,10 +12,10 @@
 </p>
 <form asp-action="Filter" asp-controller="Person" method="get">
     <div class="input-group mb-3">
-        <input type="text" class="form-control" asp-for="LastName" placeholder="Sök via Efternamn" />
+        <input type="text" class="form-control" asp-for="LastName" placeholder="Search on last name" />
        
         <div class="input-group-append">
-            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Sök</i></button>
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Search</i></button>
         </div>
     </div>
 </form>
