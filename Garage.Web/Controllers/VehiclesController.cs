@@ -27,7 +27,8 @@ namespace Garage.Web.Controllers
         {
             var model = new VehiclesOverviewViewModel
             {
-                Vehicles = await GetAllVehicles()
+                ParkedVehiclesViewModel = await GetAllParkedVehicles(),
+                FreeSpots = _context.ParkingSpot.Where(p => p.VehicleId == null).Count(),
             };
             return View(model);
         }
@@ -94,14 +95,28 @@ namespace Garage.Web.Controllers
                     return View(parkIndexViewModel);
                 }
             }
-            vehiclesOverviewView.Vehicles = await GetAllVehicles();
+            vehiclesOverviewView.ParkedVehiclesViewModel = await GetAllParkedVehicles();
             return View(nameof(Index), vehiclesOverviewView);
         }
 
-        private async Task<IEnumerable<Vehicle>> GetAllVehicles()
+        private async Task<IEnumerable<ParkedVehiclesViewModel>> GetAllParkedVehicles()
         {
-            return await _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).ToListAsync();
+            var parkedVehicles = _context.Vehicle.Include(v => v.Person).Include(v => v.VehicleType).Include(v => v.ParkingSpots).Where(v => v.IsParked == true);
+            
+
+            return await parkedVehicles.Select(p => new ParkedVehiclesViewModel
+                                            {
+                                                VehicleId = p.VehicleId,
+                                                FirstName = p.Person.FirstName,
+                                                LastName =p.Person.LastName,
+                                                VehicleType = p.VehicleType.Type,
+                                                LicenseNr = p.LicenseNr,
+                                                //ParkingTime = (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault())
+                                                ParkingTime = string.Format("{0:00}:{1:00}", (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Hours, (DateTime.Now - parkedVehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Minutes)
+
+            }).ToListAsync();
         }
+
 
         private IEnumerable<SelectListItem> GetPersonVehicles(IEnumerable<Vehicle> personVehicles)
         {
@@ -192,8 +207,11 @@ namespace Garage.Web.Controllers
         {
             var vehicleToCheckout = _context.Vehicle.Include(v => v.ParkingSpots).FirstOrDefault(v => v.VehicleId == id);
 
+            ReceiptViewModel receipt = null;
             if (vehicleToCheckout != null && vehicleToCheckout.ParkingSpots != null)
             {
+                receipt = Receipt(vehicleToCheckout);
+
                 foreach(var spot in vehicleToCheckout.ParkingSpots.ToList())
                 {
                     vehicleToCheckout.ParkingSpots.Remove(spot);
@@ -201,8 +219,15 @@ namespace Garage.Web.Controllers
                 vehicleToCheckout.IsParked = false;
                 
                 await _context.SaveChangesAsync();
+
             }
-            return RedirectToAction(nameof(Index), nameof(Person));
+
+            return View(nameof(Receipt), receipt);
+        }
+
+        public IActionResult ParkExisting()
+        {
+            return View();
         }
 
         // GET: Vehicles/Edit/5
@@ -304,6 +329,34 @@ namespace Garage.Web.Controllers
             return (_context.Vehicle?.Any(e => e.VehicleId == id)).GetValueOrDefault();
         }
 
+        public async Task<IActionResult> Filter(VehiclesOverviewViewModel vehiclesOverviewViewModel)
+        {
+            //var vehiclesParked = _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true);
+
+            var vehicles = string.IsNullOrWhiteSpace(vehiclesOverviewViewModel.LicenseNr) ?
+                                               _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true) :
+                                               _context.Vehicle.Include(v => v.VehicleType).Include(v => v.Person).Include(p => p.ParkingSpots).Where(v => v.IsParked == true).Where(v => v.LicenseNr.StartsWith(vehiclesOverviewViewModel.LicenseNr));
+
+            vehicles = vehiclesOverviewViewModel.VehicleTypeId is null ? vehicles : vehicles.Where(v => v.VehicleType.VehicleTypeId == vehiclesOverviewViewModel.VehicleTypeId);
+
+            var result = await vehicles.Select(p => new ParkedVehiclesViewModel
+            {
+                FirstName = p.Person.FirstName,
+                LastName = p.Person.LastName,
+                VehicleId = p.VehicleId,
+                VehicleType = p.VehicleType.Type,
+                LicenseNr = p.LicenseNr,
+                ParkingTime = string.Format("{0:00}:{1:00}", (DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Hours, (DateTime.Now - vehicles.FirstOrDefault(v => v.VehicleId == p.VehicleId).ParkingSpots.Select(ps => ps.Arrival).FirstOrDefault()).Minutes)
+            }).ToListAsync();
+
+            var vehicleModel = new VehiclesOverviewViewModel
+            {
+                ParkedVehiclesViewModel = result,
+                FreeSpots = _context.ParkingSpot.Where(p => p.VehicleId == null).Count(),
+            };
+            return View(nameof(Index), vehicleModel);
+        }
+
         public IActionResult CreateVehicleType()
         {
             return View();
@@ -331,6 +384,45 @@ namespace Garage.Web.Controllers
             }
 
             return View(vehicleType);
+        }
+
+        public ReceiptViewModel Receipt(Vehicle vehicle)
+        {
+            //var parkingVehicle = await _context.Vehicle.Include(v => v.ParkingSpots)
+            //                    .FirstOrDefaultAsync(v => v.VehicleId == id);
+            var parkingSpot = vehicle.ParkingSpots.FirstOrDefault(v => v.VehicleId == vehicle.VehicleId);
+
+            //_context.Vehicle.Remove(parkingVehicle);
+            //await _context.SaveChangesAsync();
+            //TempData["OkFeedbackMsg"] = $"{parkingVehicle.LicenseNr} has checked out.";
+
+            DateTime checkOut = DateTime.Now;
+            TimeSpan time = GetTime(parkingSpot.Arrival, checkOut);
+            string parkingTime = $"{time.Hours} hours {time.Minutes} minutes";
+            int totalCost = GetTotalCost(GarageSettings.pricePerHour, time);
+
+            var model = new ReceiptViewModel
+            {
+                ParkingSpotID = parkingSpot.ParkingSpotId,
+                LicenseNr = vehicle.LicenseNr,
+                Name = $"{vehicle.Person.FirstName} {vehicle.Person.LastName}",
+                Arrival = parkingSpot.Arrival,
+                CheckOut = checkOut,
+                ParkingTime = parkingTime,
+                Price = GarageSettings.pricePerHour,
+                TotalCost = totalCost
+            };
+            return model;
+        }
+
+        private TimeSpan GetTime(DateTime arrival, DateTime checkOut)
+        {
+            return checkOut.Subtract(arrival);
+        }
+
+        private int GetTotalCost(int price, TimeSpan parkingTime)
+        {
+            return (int)parkingTime.TotalMinutes * (price / 60);
         }
     }
 }

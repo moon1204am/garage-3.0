@@ -10,7 +10,7 @@ namespace Garage.Web.Validations
         {
             var validation = validationContext.GetRequiredService<IValidationService>();
 
-            const string errorMessage = "Failed";
+            const string errorMessage = "No parking space";
 
             if (value is int input)
             {

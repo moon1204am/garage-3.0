@@ -27,7 +27,7 @@ namespace Garage.Web.Controllers
                 FirstName = v.FirstName,
                 LastName = v.LastName,
                 SSN = v.SSN,
-                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Count(),
+                NumberOfParkedVehicles = _context.Vehicle.Where(p => p.PersonId == v.PersonId).Where(v=>v.IsParked).Count(),
             }).OrderByDescending(p => p.FirstName.Substring(0, 2))
              .ToListAsync();
 
@@ -86,35 +86,53 @@ namespace Garage.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PersonId,SSN,FirstName,LastName")] Person person)
+        public async Task<IActionResult> Create(PersonViewModel personViewModel)
         {
-            if (_context.Person.Any(p => p.SSN == person.SSN))
-            {
-                ModelState.AddModelError(nameof(person.SSN),
-                                         "The number is already in used.");
-            }
 
-            if (Under18Check(person.SSN))
-            {
-                ModelState.AddModelError(nameof(person.SSN),
-                                         "You must be over 18 years old.");
-            }
-
-            if (person.FirstName == person.LastName)
-            {
-                ModelState.AddModelError(nameof(person.FirstName),
-                                         "First name can be the same as last name.");
-            }
 
             if (ModelState.IsValid)
             {
+                if (_context.Person.Any(p => p.SSN == personViewModel.SSN))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                             "The number is already in used.");
+                    return View(personViewModel);
+                }
+
+                if (!(personViewModel.SSN.Length == 12))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                            "Please enter a valid 12 digits SSN");
+                    return View(personViewModel);
+
+                }
+
+                if (Under18Check(personViewModel.SSN))
+                {
+                    ModelState.AddModelError(nameof(personViewModel.SSN),
+                                             "You must be over 18 years old.");
+                    return View(personViewModel);
+                }
+
+                if (personViewModel.FirstName == personViewModel.LastName)
+                {
+                    ModelState.AddModelError(nameof(personViewModel.FirstName),
+                                             "First name can be the same as last name.");
+                    return View(personViewModel);
+                }
+                var person = new Person
+                {
+                    SSN = personViewModel.SSN,
+                    FirstName = personViewModel.FirstName,
+                    LastName = personViewModel.LastName
+                };
                 _context.Add(person);
                 await _context.SaveChangesAsync();
                 TempData["OkFeedbackMsg"] = $"{person.FirstName} {person.LastName} has successfully registered as member.";
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(person);
+            return View(personViewModel);
         }
 
 
@@ -225,7 +243,33 @@ namespace Garage.Web.Controllers
             return true;
         }
 
+        private bool ValidSSM(string ssn)
+        {
+            try { return ssn.Length == 12; }
+            catch { return false; }
+            
+        }
 
+        
+        //Doesn't work
+        //private bool IsValidDate(string ssn)
+        //{
+        //    var sss = ssn.Substring(0, 8);
+        //    if (!DateTime.TryParse(ssn.Substring(0, 8), out var birthday) ) 
+        //    {
+        //        return false;
+        //    }
+        //    //DateTime birthday = DateTime.TryParse(ssn.Substring(0,8), out var result)? result : DateTime.Now;
+        //    int year = birthday.Year;
+        //    int month = birthday.Month;
+        //    int day = birthday.Day;
+
+        //    if (month >= 1 && month <= 12 && day >= 1 && day <= DateTime.DaysInMonth(year, month))
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
         private bool PersonExists(int id)
         {
             return (_context.Person?.Any(e => e.PersonId == id)).GetValueOrDefault();

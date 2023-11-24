@@ -14,5 +14,7 @@
         public const int small = 1;
 
         public const int capacity = 20;
+        public const int pricePerHour = 120;
+        public const int pricePerMinute = 2;
     }
 }

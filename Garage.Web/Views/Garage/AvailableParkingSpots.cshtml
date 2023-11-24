@@ -1,0 +1,24 @@
+﻿@model AvailableSpotsViewModel
+
+@{
+    ViewData["Title"] = "AvailableParkingSpots";
+}
+
+<h1 class="display-6">Available ParkingSpots</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AvailableParkingSpots)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AvailableParkingSpots)
+        </dd>
+    </dl>
+</div>
+
+
+<div>
+    <a asp-controller="Vehicles" asp-action="Index">Back to Vehicle Index</a>
+</div> 

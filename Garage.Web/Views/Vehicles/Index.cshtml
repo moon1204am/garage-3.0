@@ -1,29 +1,34 @@
 ﻿@model VehiclesOverviewViewModel
+@inject IVehicleTypeSelectListService service
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Parked Vehicles</h1>
 
 <p>
-    <a asp-action="Create">Add New Vehicle</a>  <a asp-action="CreateVehicleType">Add New VehicleType</a>
+    <a asp-action="Create" class="btn btnAhlens mb-1">Add Vehicle to account</a> |
+    <a asp-action="ParkExisting" class="btn btnAhlens mb-1" >Park Existing Vehicle</a> |
+    <a asp-action="CreateVehicleType" class="btn btnAhlens mb-1" >Add VehicleType</a>
 </p>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Park"  method="get">Park Existing Vehicle
-            <div class="form-group">
-                <label asp-for="SSN" class="control-label"></label>
-                <input asp-for="SSN" class="form-control"></input>
-                <span asp-validation-for="SSN" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Enter" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+<p>Nr of free spots: @Model.FreeSpots </p>
 
-<partial name="_VehiclesPartial" model="@Model.Vehicles" />
+
+<form asp-action="Filter" asp-controller="Vehicles" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" asp-for="LicenseNr" placeholder="Search on license number" />
+        <div class="input-group-append">
+            <select class="form-control" asp-for="VehicleTypeId" asp-items="@service.GetVehicleTypes()">
+                <option selected="selected" value="">Choose vehicle</option>
+            </select>
+        </div>
+        <div class="input-group-append">
+            <button type="submit" class="btn btnAhlens"><i class="fa fa-search">Search</i></button>
+        </div>
+    </div>
+</form>
+
+<partial name="_VehiclesPartial" model="@Model.ParkedVehiclesViewModel" />
 
