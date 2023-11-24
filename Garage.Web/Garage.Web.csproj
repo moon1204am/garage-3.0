@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Garage.Data\Garage.Data.csproj" />
     <ProjectReference Include="..\Garage.Domain\Garage.Domain.csproj" />
   </ItemGroup>
