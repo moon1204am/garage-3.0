@@ -1,4 +1,4 @@
-﻿@model Garage.Domain.Entities.Vehicle
+﻿@model EditVehicleViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,11 +13,6 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="VehicleId" />
-            <div class="form-group">
-                <label asp-for="LicenseNr" class="control-label"></label>
-                <input asp-for="LicenseNr" class="form-control" />
-                <span asp-validation-for="LicenseNr" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Color" class="control-label"></label>
                 <input asp-for="Color" class="form-control" />
@@ -37,16 +32,6 @@
                 <label asp-for="Wheels" class="control-label"></label>
                 <input asp-for="Wheels" class="form-control" />
                 <span asp-validation-for="Wheels" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VehicleTypeId" class="control-label"></label>
-                <select asp-for="VehicleTypeId" class="form-control" asp-items="ViewBag.VehicleTypeId"></select>
-                <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PersonId" class="control-label"></label>
-                <select asp-for="PersonId" class="form-control" asp-items="ViewBag.PersonId"></select>
-                <span asp-validation-for="PersonId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

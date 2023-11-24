@@ -7,7 +7,7 @@ namespace Garage.Web.Models.ViewModels
     {
         public IEnumerable<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         public int PersonId { get; set; }
-        [Display(Name = "SSN")]
+        [Display(Name = "Social security number")]
         public string SSN { get; set; } = string.Empty;
         [Display(Name = "First name")]
         public string FirstName { get; set; } = string.Empty;
