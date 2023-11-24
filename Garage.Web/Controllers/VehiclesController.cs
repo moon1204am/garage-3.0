@@ -240,9 +240,17 @@ namespace Garage.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
-            return View(vehicle);
+            var editViewModel = new EditVehicleViewModel
+            {
+                VehicleId = vehicle.VehicleId,
+                Color = vehicle.Color,
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                Wheels = vehicle.Wheels
+
+            };
+
+            return View(editViewModel);
         }
 
         // POST: Vehicles/Edit/5
@@ -250,9 +258,9 @@ namespace Garage.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VehicleId,LicenseNr,Color,Brand,Model,Wheels,Arrival,ParkingIndex,VehicleTypeId,PersonId")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, EditVehicleViewModel editVehicleViewModel)
         {
-            if (id != vehicle.VehicleId)
+            if (id != editVehicleViewModel.VehicleId)
             {
                 return NotFound();
             }
@@ -261,12 +269,21 @@ namespace Garage.Web.Controllers
             {
                 try
                 {
-                    _context.Update(vehicle);
+                    var vehicleToEdit = _context.Vehicle.FirstOrDefault(v => v.VehicleId == editVehicleViewModel.VehicleId);
+                    if (vehicleToEdit != null)
+                    {
+                        vehicleToEdit.Color = editVehicleViewModel.Color;
+                        vehicleToEdit.Brand = editVehicleViewModel.Brand;
+                        vehicleToEdit.Model = editVehicleViewModel.Model;
+                        vehicleToEdit.Wheels = editVehicleViewModel.Wheels;
+                        _context.Update(vehicleToEdit);
+                    }
+                    
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VehicleExists(vehicle.VehicleId))
+                    if (!VehicleExists(editVehicleViewModel.VehicleId))
                     {
                         return NotFound();
                     }
@@ -277,9 +294,8 @@ namespace Garage.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PersonId"] = new SelectList(_context.Set<Person>(), "PersonId", "FirstName", vehicle.PersonId);
-            ViewData["VehicleTypeId"] = new SelectList(_context.Set<VehicleType>(), "VehicleTypeId", "Size", vehicle.VehicleTypeId);
-            return View(vehicle);
+
+            return View(editVehicleViewModel);
         }
 
         // GET: Vehicles/Delete/5

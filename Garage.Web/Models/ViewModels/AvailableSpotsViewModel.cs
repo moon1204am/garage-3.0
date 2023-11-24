@@ -4,7 +4,7 @@ namespace Garage.Web.Models.ViewModels
 {
     public class AvailableSpotsViewModel
     {
-        [Display(Name = "Available Parkingspots: ")]
+        [Display(Name = "Available Parking spots: ")]
         public string AvailableParkingSpots { get; set; } = string.Empty;
     }
 }
