@@ -1,5 +1,4 @@
 ﻿using Garage.Domain.Entities;
-using Garage.Web.Validations;
 using System.ComponentModel.DataAnnotations;
 
 namespace Garage.Web.Models.ViewModels

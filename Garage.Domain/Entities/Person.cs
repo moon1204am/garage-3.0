@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 
 namespace Garage.Domain.Entities
@@ -25,7 +19,6 @@ namespace Garage.Domain.Entities
         [Display(Name = "First Name"), Required(ErrorMessage = "A first name is required.")]
         
         public string FirstName { get; set; } = string.Empty;
-        //Nav prop
         public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
         
     }
